@@ -1,0 +1,13 @@
+[
+  { "id": "DE2-480", "display_name": "DE2", "weight": 38, "length": 7.6 },
+  { "id": "S060-440", "display_name": "S060", "weight": 50.7, "length": 9.32 },
+  { "id": "DM3-540", "display_name": "DM3", "weight": 52, "length": 8.6 },
+  { "id": "DH4-670", "display_name": "DH4", "weight": 77.5, "length": 12.94 },
+  { "id": "S282-730A", "display_name": "S282", "weight": 77.5, "length": 12.94 },
+  { "id": "S282-730B", "display_name": "S282 Tender", "weight": 50, "length": 8.54 },
+  { "id": "DE6-860", "display_name": "DE6", "weight": 125, "length": 18.64 },
+  { "id": "DE6-860S", "display_name": "DE6 Slug", "weight": 125, "length": 16.8 },
+  { "id": "BE2-260", "display_name": "BE2", "nickname": "Microshunter", "weight": 12, "length": 4.80 },
+  { "id": "Support-01", "display_name": "Caboose", "weight": 22, "length": 13.2 },
+  { "id": "DM1U-150", "display_name": "Utility Rail Vehicle", "nickname": "URV", "weight": 10.4, "length": 14.47 }
+]
