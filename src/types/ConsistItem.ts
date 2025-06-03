@@ -14,8 +14,9 @@ export interface JobItem extends ConsistItem {
     start_location: string;
     end_location: string;
     bonus_time_limit: number;
-    bonus_time_elapsed: 0;
+    bonus_time_elapsed: number;
     status: JobStatus;
+    end_timestamp?: EpochTimeStamp;
 }
 
 export enum JobStatus {

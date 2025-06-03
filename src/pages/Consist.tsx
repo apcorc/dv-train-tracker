@@ -74,6 +74,15 @@ function locationName(location: string): string {
     return station.name + ' ' + yard.id + ' ' + track.display_name;
 }
 
+function getBonusTimeRemaining(item: JobItem): number {
+  if (item.status === JobStatus.Active && item.end_timestamp) {
+    const now = Math.floor(Date.now() / 1000);
+    return Math.max(0, item.end_timestamp - now);
+  }
+  // If paused or not started, remaining = limit - elapsed
+  return Math.max(0, item.bonus_time_limit - (item.bonus_time_elapsed || 0));
+}
+
 // Components for each concretion
 const Locomotive: React.FC<{ item: StaticConsistItem }> = ({ item }) => {
   // Find the locomotive by id
@@ -92,31 +101,62 @@ const Locomotive: React.FC<{ item: StaticConsistItem }> = ({ item }) => {
   );
 };
 
-const Job: React.FC<{ item: JobItem }> = ({ item }) => (
-  <div>
-    <strong>Job:</strong> {item.id} (Weight: {item.weight}, Length: {item.length})
-    <br />
-    From {locationName(item.start_location)} to {locationName(item.end_location)}.<br />
-    Bonus Time Limit: {Math.round(item.bonus_time_limit / 60)} min<br />
-    Bonus Time Elapsed: {Math.round(item.bonus_time_elapsed / 60)} min<br />
-    Status: {statusText(item.status)}
-  </div>
-);
+const formatTime = (seconds: number) => {
+  const mm = Math.floor(seconds / 60)
+    .toString()
+    .padStart(2, '0');
+  const ss = Math.floor(seconds % 60)
+    .toString()
+    .padStart(2, '0');
+  return `${mm}:${ss}`;
+};
+
+const Job: React.FC<{
+  item: JobItem;
+  onStart: () => void;
+  onPause: () => void;
+}> = ({ item, onStart, onPause }) => {
+  const remaining = getBonusTimeRemaining(item);
+
+  return (
+    <div>
+      <strong>Job:</strong> {item.id} (Weight: {item.weight}, Length: {item.length})
+      <br />
+      From {locationName(item.start_location)} to {locationName(item.end_location)}.<br />
+      Bonus Time Limit: {Math.round(item.bonus_time_limit / 60)} min<br />
+      <strong>Bonus Time Remaining: {formatTime(remaining)}</strong><br />
+      Status: {statusText(item.status)}
+      {item.status === JobStatus.NotStarted || item.status === JobStatus.Paused ? (
+        <button style={{ marginLeft: 8 }} onClick={onStart}>Start</button>
+      ) : (
+        <button style={{ marginLeft: 8 }} onClick={onPause}>Pause</button>
+      )}
+    </div>
+  );
+};
 
 const Consist: React.FC = () => {
   const [items, setItems] = useState<AnyConsistItem[]>([]);
+  const [, setTick] = useState(0); // for re-rendering timer
 
   useEffect(() => {
     const stored = localStorage.getItem('consistItems');
     if (stored) {
       setItems(JSON.parse(stored));
     }
+    // Timer to update remaining time every second
+    const interval = setInterval(() => setTick(t => t + 1), 1000);
+    return () => clearInterval(interval);
   }, []);
+
+  const persist = (updated: AnyConsistItem[]) => {
+    setItems(updated);
+    localStorage.setItem('consistItems', JSON.stringify(updated));
+  };
 
   const removeItem = (index: number) => {
     const updated = items.filter((_, idx) => idx !== index);
-    setItems(updated);
-    localStorage.setItem('consistItems', JSON.stringify(updated));
+    persist(updated);
   };
 
   const moveItem = (from: number, to: number) => {
@@ -124,21 +164,91 @@ const Consist: React.FC = () => {
     const updated = [...items];
     const [moved] = updated.splice(from, 1);
     updated.splice(to, 0, moved);
-    setItems(updated);
-    localStorage.setItem('consistItems', JSON.stringify(updated));
+    persist(updated);
   };
+
+  // Helper to pause a job item
+  function pauseJobItem(item: AnyConsistItem): AnyConsistItem {
+    if (!isJob(item) || item.status !== JobStatus.Active || !item.end_timestamp) return item;
+    const timeSpent = Math.max(0, item.bonus_time_limit - getBonusTimeRemaining(item));
+    return {
+      ...item,
+      status: JobStatus.Paused,
+      bonus_time_elapsed: timeSpent,
+      end_timestamp: undefined,
+    };
+  }
+
+  // Helper to resume a job item (only if paused)
+  function resumeJobItem(item: AnyConsistItem): AnyConsistItem {
+    if (!isJob(item) || item.status !== JobStatus.Paused) return item;
+    const now = Math.floor(Date.now() / 1000);
+    const remaining = item.bonus_time_limit - (item.bonus_time_elapsed || 0);
+    return {
+      ...item,
+      status: JobStatus.Active,
+      end_timestamp: now + remaining,
+    };
+  }
+
+  // Start a job: set status, end_timestamp
+  const startJob = (idx: number) => {
+    const updated = items.map((item, i) => {
+      if (i !== idx || !isJob(item)) return item;
+      const now = Math.floor(Date.now() / 1000);
+      const remaining = item.bonus_time_limit - (item.bonus_time_elapsed || 0);
+      return {
+        ...item,
+        status: JobStatus.Active,
+        end_timestamp: now + remaining,
+      };
+    });
+    persist(updated);
+  };
+
+  // Pause a job: update elapsed, clear end_timestamp, set status
+  const pauseJob = (idx: number) => {
+    const updated = items.map((item, i) => (i === idx ? pauseJobItem(item) : item));
+    persist(updated);
+  };
+
+  // Pause all active jobs
+  const pauseAll = () => {
+    const updated = items.map(item => pauseJobItem(item));
+    persist(updated);
+  };
+
+  // Resume all paused jobs (do not start NotStarted jobs)
+  const resumeAll = () => {
+    const updated = items.map(item => resumeJobItem(item));
+    persist(updated);
+  };
+
+  // Determine if all jobs are paused (and at least one is a job)
+  const jobs = items.filter(isJob);
+  const allPaused = jobs.length > 0 && jobs.every(j => j.status !== JobStatus.Active);
 
   return (
     <div>
       <h1>Consist</h1>
-      <a href="./#/locomotives">Add Locomotive</a>&nbsp;<a href="./#/newjob">Add Job</a>
+      <button onClick={allPaused ? resumeAll : pauseAll}>
+        {allPaused ? 'Resume All' : 'Pause All'}
+      </button>
+      <a href="./#/locomotives" style={{ marginLeft: 16 }}>Add Locomotive</a>
+      <a href="./#/newjob" style={{ marginLeft: 8 }}>Add Job</a>
       <p>Total weight: { totalWeight(items) }t</p>
       <p>Total length: { totalLength(items) }m</p>
       <ul>
         {items.map((item, idx) => (
           <li key={idx}>
             {isStaticItem(item) && <Locomotive item={item} />}
-            {isJob(item) && <Job item={item} />}
+            {isJob(item) && (
+              <Job
+                item={item}
+                onStart={() => startJob(idx)}
+                onPause={() => pauseJob(idx)}
+              />
+            )}
             <button style={{ marginLeft: 8 }} onClick={() => removeItem(idx)}>
               Remove
             </button>
