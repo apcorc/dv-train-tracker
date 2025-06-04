@@ -167,7 +167,6 @@ const Locomotive: React.FC<{
   onStart: () => void;
   onStop: () => void;
 }> = ({ item, onStart, onStop }) => {
-  // Find the locomotive by id
   const loco = locomotives.find(l => l.id === item.id);
 
   if (!loco) {
@@ -175,17 +174,28 @@ const Locomotive: React.FC<{
   }
 
   return (
-    <div>
-      <strong>Locomotive:</strong> {loco.display_name}
-      {loco.nickname && ` (${loco.nickname})`}
-      {' '}<span style={{ color: '#888' }}>(Weight: {loco.weight}, Length: {loco.length})</span>
-      { item.can_run && (
-        <span>
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
+      <div>
+        <strong>Locomotive:</strong> {loco.display_name}
+        {loco.nickname && ` (${loco.nickname})`}
+        {' '}<span style={{ color: '#888' }}>(Weight: {loco.weight}, Length: {loco.length})</span>
+        {item.can_run && (
+          <>
             <br />
             <span style={{ fontSize: 13, color: item.is_on ? '#27ae60' : '#c0392b' }}>
-                {item.is_on ? 'Running' : 'Stopped'}
+              {item.is_on ? 'Running' : 'Stopped'}
             </span>
-        </span>
+          </>
+        )}
+      </div>
+      {item.can_run && (
+        <div style={{ display: 'flex', gap: 8 }}>
+          {item.is_on ? (
+            <button onClick={onStop}>Stop</button>
+          ) : (
+            <button onClick={onStart}>Start</button>
+          )}
+        </div>
       )}
     </div>
   );
@@ -209,21 +219,32 @@ const Job: React.FC<{
   const remaining = getBonusTimeRemaining(item);
 
   return (
-    <div>
-      <strong>Job:</strong> {item.id} <span style={{ color: '#888' }}>(Weight: {item.weight}, Length: {item.length})</span>
-      <br />
-      <span style={{ fontSize: 13 }}>
-        From <b>{locationName(item.start_location)}</b> to <b>{locationName(item.end_location)}</b>
-      </span>
-      <br />
-      { item.bonus_time_limit > 0 && (
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
+      <div>
+        <strong>Job:</strong> {item.id} <span style={{ color: '#888' }}>(Weight: {item.weight}, Length: {item.length})</span>
+        <br />
         <span style={{ fontSize: 13 }}>
+          From <b>{locationName(item.start_location)}</b> to <b>{locationName(item.end_location)}</b>
+        </span>
+        <br />
+        {item.bonus_time_limit > 0 && (
+          <span style={{ fontSize: 13 }}>
             Bonus Time Limit: {Math.round(item.bonus_time_limit / 60)} min |{' '}
             <strong>Remaining: {formatTime(remaining)}</strong>
             <br />
-        </span>
+          </span>
+        )}
+        <span style={{ fontSize: 13, color: '#888' }}>Status: {statusText(item.status)}</span>
+      </div>
+      {item.bonus_time_limit > 0 && (
+        <div style={{ display: 'flex', gap: 8 }}>
+          {item.status === JobStatus.NotStarted || item.status === JobStatus.Paused ? (
+            <button onClick={onStart}>Start</button>
+          ) : (
+            <button onClick={onPause}>Pause</button>
+          )}
+        </div>
       )}
-      <span style={{ fontSize: 13, color: '#888' }}>Status: {statusText(item.status)}</span>
     </div>
   );
 };
@@ -262,19 +283,19 @@ const Consist: React.FC = () => {
 
   const startLocomotive = (idx: number) => {
     const updated = items.map((item, i) => {
-        if(i !== idx || !isStaticItem(item) || item.is_on) { return item; }
-        return { ...item, is_on: true }
+      if (i !== idx || !isStaticItem(item) || item.is_on) { return item; }
+      return { ...item, is_on: true }
     });
     persist(updated);
-  }
+  };
 
   const stopLocomotive = (idx: number) => {
     const updated = items.map((item, i) => {
-        if(i !== idx || !isStaticItem(item) || !item.is_on) { return item; }
-        return { ...item, is_on: false }
+      if (i !== idx || !isStaticItem(item) || !item.is_on) { return item; }
+      return { ...item, is_on: false }
     });
     persist(updated);
-  }
+  };
 
   // Helper to pause a job item
   function pauseJobItem(item: AnyConsistItem): AnyConsistItem {
@@ -398,20 +419,6 @@ const Consist: React.FC = () => {
               }
               right={
                 <div style={{ display: 'flex', gap: 6 }}>
-                  {(isStaticItem(item) && item.can_run) && (
-                    item.is_on ? (
-                      <button onClick={() => stopLocomotive(idx)}>Stop</button>
-                    ) : (
-                      <button onClick={() => startLocomotive(idx)}>Start</button>
-                    )
-                  )}
-                  { (isJob(item) && item.bonus_time_limit > 0) && (
-                    item.status === JobStatus.NotStarted || item.status === JobStatus.Paused ? (
-                      <button onClick={() => startJob(idx)}>Start</button>
-                    ) : (
-                      <button onClick={() => pauseJob(idx)}>Pause</button>
-                    )
-                  )}
                   <button
                     onClick={() => moveItem(idx, idx - 1)}
                     disabled={idx === 0}
