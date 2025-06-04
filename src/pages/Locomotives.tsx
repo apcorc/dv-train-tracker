@@ -3,8 +3,8 @@ import { Locomotive, locomotives } from '../types/Locomotive';
 import { StaticConsistItem } from '../types/ConsistItem';
 
 
-const addToConsist = (id: string) => {
-  const newItem: StaticConsistItem = { id, isStatic: true, is_on: true };
+const addToConsist = (item: Locomotive) => {
+  const newItem: StaticConsistItem = { id: item.id, isStatic: true, is_on: true, can_run: item.load_rating !== null };
   const existing = JSON.parse(localStorage.getItem('consistItems') || '[]');
   localStorage.setItem('consistItems', JSON.stringify([...existing, newItem]));
   window.location.hash = '/#';
@@ -21,7 +21,7 @@ const LocomotiveComponent: React.FC<{ item: Locomotive }> = ({ item }) => (
         {' '} (Weight: {item.weight}, Length: {item.length})
       </span>
     </div>
-    <button style={{ minWidth: 120 }} onClick={() => addToConsist(item.id)}>
+    <button style={{ minWidth: 120 }} onClick={() => addToConsist(item)}>
       Add to Consist
     </button>
   </div>

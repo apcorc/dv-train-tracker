@@ -30,7 +30,7 @@ function totalLoadRating(items: AnyConsistItem[]): LocomotiveLoadRating {
     items.forEach(item => {
         if (isStaticItem(item) && item.is_on) {
             const loco = locomotives.find(l => l.id === item.id);
-            if (loco) {
+            if (loco && loco.load_rating) {
                 total.grade_0_dry += loco.load_rating.grade_0_dry;
                 total.grade_2_dry += loco.load_rating.grade_2_dry;
                 total.grade_2_wet += loco.load_rating.grade_2_wet;
@@ -179,10 +179,14 @@ const Locomotive: React.FC<{
       <strong>Locomotive:</strong> {loco.display_name}
       {loco.nickname && ` (${loco.nickname})`}
       {' '}<span style={{ color: '#888' }}>(Weight: {loco.weight}, Length: {loco.length})</span>
-      <br />
-      <span style={{ fontSize: 13, color: item.is_on ? '#27ae60' : '#c0392b' }}>
-        {item.is_on ? 'Running' : 'Stopped'}
-      </span>
+      { item.can_run && (
+        <span>
+            <br />
+            <span style={{ fontSize: 13, color: item.is_on ? '#27ae60' : '#c0392b' }}>
+                {item.is_on ? 'Running' : 'Stopped'}
+            </span>
+        </span>
+      )}
     </div>
   );
 };
@@ -212,11 +216,13 @@ const Job: React.FC<{
         From <b>{locationName(item.start_location)}</b> to <b>{locationName(item.end_location)}</b>
       </span>
       <br />
-      <span style={{ fontSize: 13 }}>
-        Bonus Time Limit: {Math.round(item.bonus_time_limit / 60)} min |{' '}
-        <strong>Remaining: {formatTime(remaining)}</strong>
-      </span>
-      <br />
+      { item.bonus_time_limit > 0 && (
+        <span style={{ fontSize: 13 }}>
+            Bonus Time Limit: {Math.round(item.bonus_time_limit / 60)} min |{' '}
+            <strong>Remaining: {formatTime(remaining)}</strong>
+            <br />
+        </span>
+      )}
       <span style={{ fontSize: 13, color: '#888' }}>Status: {statusText(item.status)}</span>
     </div>
   );
@@ -254,17 +260,19 @@ const Consist: React.FC = () => {
     persist(updated);
   };
 
-  const startLocomotive = (item: AnyConsistItem) => {
-    if (!isStaticItem(item)) { return }
-    if (item.is_on) { return }
-    const updated = items.map(i => (i.id === item.id ? { ...i, is_on: true } : i));
+  const startLocomotive = (idx: number) => {
+    const updated = items.map((item, i) => {
+        if(i !== idx || !isStaticItem(item) || item.is_on) { return item; }
+        return { ...item, is_on: true }
+    });
     persist(updated);
   }
 
-  const stopLocomotive = (item: AnyConsistItem) => {
-    if (!isStaticItem(item)) { return }
-    if (!item.is_on) { return }
-    const updated = items.map(i => (i.id === item.id ? { ...i, is_on: false } : i));
+  const stopLocomotive = (idx: number) => {
+    const updated = items.map((item, i) => {
+        if(i !== idx || !isStaticItem(item) || !item.is_on) { return item; }
+        return { ...item, is_on: false }
+    });
     persist(updated);
   }
 
@@ -338,7 +346,7 @@ const Consist: React.FC = () => {
       />
       <div style={{ display: 'flex', justifyContent: 'center', gap: 12, marginBottom: 24, flexWrap: 'wrap' }}>
         <button onClick={allPaused ? resumeAll : pauseAll} style={{ minWidth: 120 }}>
-          {allPaused ? 'Resume All' : 'Pause All'}
+          {allPaused ? 'Resume All Jobs' : 'Pause All Jobs'}
         </button>
         <a href="./#/locomotives" style={{ minWidth: 120, textAlign: 'center', lineHeight: '32px', background: '#eaf1fb', borderRadius: 6, padding: '0 12px', textDecoration: 'none' }}>Add Locomotive</a>
         <a href="./#/newjob" style={{ minWidth: 120, textAlign: 'center', lineHeight: '32px', background: '#eaf1fb', borderRadius: 6, padding: '0 12px', textDecoration: 'none' }}>Add Job</a>
@@ -377,8 +385,8 @@ const Consist: React.FC = () => {
                 isStaticItem(item) ? (
                   <Locomotive
                     item={item}
-                    onStart={() => startLocomotive(item)}
-                    onStop={() => stopLocomotive(item)}
+                    onStart={() => startLocomotive(idx)}
+                    onStop={() => stopLocomotive(idx)}
                   />
                 ) : isJob(item) ? (
                   <Job
@@ -390,7 +398,20 @@ const Consist: React.FC = () => {
               }
               right={
                 <div style={{ display: 'flex', gap: 6 }}>
-                  <button onClick={() => removeItem(idx)}>Remove</button>
+                  {(isStaticItem(item) && item.can_run) && (
+                    item.is_on ? (
+                      <button onClick={() => stopLocomotive(idx)}>Stop</button>
+                    ) : (
+                      <button onClick={() => startLocomotive(idx)}>Start</button>
+                    )
+                  )}
+                  { (isJob(item) && item.bonus_time_limit > 0) && (
+                    item.status === JobStatus.NotStarted || item.status === JobStatus.Paused ? (
+                      <button onClick={() => startJob(idx)}>Start</button>
+                    ) : (
+                      <button onClick={() => pauseJob(idx)}>Pause</button>
+                    )
+                  )}
                   <button
                     onClick={() => moveItem(idx, idx - 1)}
                     disabled={idx === 0}
@@ -405,20 +426,7 @@ const Consist: React.FC = () => {
                   >
                     ↓
                   </button>
-                  {isStaticItem(item) && (
-                    item.is_on ? (
-                      <button onClick={() => stopLocomotive(item)}>Stop</button>
-                    ) : (
-                      <button onClick={() => startLocomotive(item)}>Start</button>
-                    )
-                  )}
-                  {isJob(item) && (
-                    item.status === JobStatus.NotStarted || item.status === JobStatus.Paused ? (
-                      <button onClick={() => startJob(idx)}>Start</button>
-                    ) : (
-                      <button onClick={() => pauseJob(idx)}>Pause</button>
-                    )
-                  )}
+                  <button onClick={() => removeItem(idx)}>Remove</button>
                 </div>
               }
             />

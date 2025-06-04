@@ -6,7 +6,7 @@ export interface Locomotive {
   nickname?: string;
   weight: number;
   length: number;
-  load_rating: LocomotiveLoadRating;
+  load_rating?: LocomotiveLoadRating | null;
 }
 
 export interface LocomotiveLoadRating {

@@ -59,11 +59,7 @@
     "display_name": "S282 Tender", 
     "weight": 50, 
     "length": 8.54,
-    "load_rating": {
-        "grade_0_dry": 0,
-        "grade_2_dry": 0,
-        "grade_2_wet": 0
-    }
+    "load_rating": null
   },
   { 
     "id": "DE6-860", 
@@ -81,11 +77,7 @@
     "display_name": "DE6 Slug", 
     "weight": 125, 
     "length": 16.8,
-    "load_rating": {
-        "grade_0_dry": 0,
-        "grade_2_dry": 0,
-        "grade_2_wet": 0
-    }
+    "load_rating": null
   },
   { 
     "id": "BE2-260", 
@@ -104,11 +96,7 @@
     "display_name": "Caboose",
     "weight": 22, 
     "length": 13.2,
-    "load_rating": {
-        "grade_0_dry": 0,
-        "grade_2_dry": 0,
-        "grade_2_wet": 0
-    }
+    "load_rating": null
   },
   { 
     "id": "DM1U-150", 
@@ -116,10 +104,6 @@
     "nickname": "URV", 
     "weight": 10.4,
     "length": 14.47,
-    "load_rating": {
-        "grade_0_dry": 0,
-        "grade_2_dry": 0,
-        "grade_2_wet": 0
-    }
+    "load_rating": null
   }
 ]
