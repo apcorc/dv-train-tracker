@@ -42,13 +42,15 @@ const AutocompleteInput: React.FC<{
   const [showOptions, setShowOptions] = useState(false);
   const [highlighted, setHighlighted] = useState<number>(-1);
 
+  const optionsRefs = React.useRef<(HTMLDivElement | null)[]>([]);
+
   const tokens = inputValue.toLowerCase().split(' ');
 
   const filtered = allLocationOptions.filter(option => {
     return tokens.every(token => {
-      return option.label.toLowerCase().includes(token) 
-        || (option.stationName && option.stationName.toLowerCase().includes(token)) 
-        || (option.stationCode && option.stationCode.toLowerCase().includes(token)) 
+      return option.label.toLowerCase().includes(token)
+        || (option.stationName && option.stationName.toLowerCase().includes(token))
+        || (option.stationCode && option.stationCode.toLowerCase().includes(token))
         || (option.trackName && option.trackName.toLowerCase().includes(token));
     });
   });
@@ -57,7 +59,7 @@ const AutocompleteInput: React.FC<{
     setInputValue(e.target.value);
     setShowOptions(true);
     setHighlighted(-1);
-    onChange(''); // Clear value until selection
+    onChange('');
   };
 
   const handleSelect = (option: LocationOption) => {
@@ -81,6 +83,16 @@ const AutocompleteInput: React.FC<{
       }
     }
   };
+
+  // Scroll highlighted option into view
+  React.useEffect(() => {
+    if (highlighted >= 0 && optionsRefs.current[highlighted]) {
+      optionsRefs.current[highlighted]?.scrollIntoView({
+        block: 'nearest',
+        behavior: 'smooth',
+      });
+    }
+  }, [highlighted]);
 
   React.useEffect(() => {
     // When value changes externally, update inputValue to show label
@@ -121,6 +133,7 @@ const AutocompleteInput: React.FC<{
           {filtered.map((opt, idx) => (
             <div
               key={opt.value}
+              ref={el => optionsRefs.current[idx] = el}
               style={{
                 padding: 8,
                 cursor: 'pointer',
