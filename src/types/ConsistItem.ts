@@ -6,6 +6,7 @@ export interface ConsistItem {
 
 export interface StaticConsistItem extends ConsistItem {
     isStatic: true;
+    is_on: boolean;
 }
 
 export interface JobItem extends ConsistItem {

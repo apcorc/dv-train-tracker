@@ -4,7 +4,7 @@ import { StaticConsistItem } from '../types/ConsistItem';
 
 
 const addToConsist = (id: string) => {
-  const newItem: StaticConsistItem = { id, isStatic: true };
+  const newItem: StaticConsistItem = { id, isStatic: true, is_on: true };
   const existing = JSON.parse(localStorage.getItem('consistItems') || '[]');
   localStorage.setItem('consistItems', JSON.stringify([...existing, newItem]));
   window.location.hash = '/#';

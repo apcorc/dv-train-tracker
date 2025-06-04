@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { AnyConsistItem, JobItem, JobStatus, StaticConsistItem } from '../types/ConsistItem';
-import { locomotives } from '../types/Locomotive';
+import { LocomotiveLoadRating, locomotives } from '../types/Locomotive';
 import { stations } from '../types/Station';
 
 // Type guards
@@ -17,7 +17,28 @@ function totalWeight(items: AnyConsistItem[]): number {
 }
 
 function totalLength(items: AnyConsistItem[]): number {
-    return Math.round(items.reduce((acc, item) => acc + length(item), 0));
+  return Math.round(items.reduce((acc, item) => acc + length(item), 0));
+}
+
+function totalLoadRating(items: AnyConsistItem[]): LocomotiveLoadRating {
+    const total: LocomotiveLoadRating = {
+        grade_0_dry: 0,
+        grade_2_dry: 0,
+        grade_2_wet: 0,
+    };
+    
+    items.forEach(item => {
+        if (isStaticItem(item) && item.is_on) {
+            const loco = locomotives.find(l => l.id === item.id);
+            if (loco) {
+                total.grade_0_dry += loco.load_rating.grade_0_dry;
+                total.grade_2_dry += loco.load_rating.grade_2_dry;
+                total.grade_2_wet += loco.load_rating.grade_2_wet;
+            }
+        }
+    });
+    
+    return total;
 }
 
 function weight(item: AnyConsistItem): number {
@@ -84,7 +105,11 @@ function getBonusTimeRemaining(item: JobItem): number {
 }
 
 // Components for each concretion
-const Locomotive: React.FC<{ item: StaticConsistItem }> = ({ item }) => {
+const Locomotive: React.FC<{ 
+    item: StaticConsistItem;
+    onStart: () => void;
+    onStop: () => void; 
+}> = ({ item, onStart, onStop }) => {
   // Find the locomotive by id
   const loco = locomotives.find(l => l.id === item.id);
 
@@ -96,7 +121,12 @@ const Locomotive: React.FC<{ item: StaticConsistItem }> = ({ item }) => {
     <div>
       <strong>Locomotive:</strong> {loco.display_name}
       {loco.nickname && ` (${loco.nickname})`}
-      {' '} (Weight: {loco.weight}, Length: {loco.length})
+      {' '} (Weight: {loco.weight}, Length: {loco.length}) <br />
+      {item.is_on ? (
+        <button style={{ marginLeft: 8 }} onClick={onStop}>Stop</button>
+      ) : (
+        <button style={{ marginLeft: 8 }} onClick={onStart}>Start</button>
+      )}
     </div>
   );
 };
@@ -166,6 +196,20 @@ const Consist: React.FC = () => {
     updated.splice(to, 0, moved);
     persist(updated);
   };
+
+  const startLocomotive = (item: AnyConsistItem) => {
+    if (!isStaticItem(item)) { return }
+    if (item.is_on) { return }
+    const updated = items.map(i => (i.id === item.id ? { ...i, is_on: true } : i));
+    persist(updated);
+  }
+
+  const stopLocomotive = (item: AnyConsistItem) => {
+    if (!isStaticItem(item)) { return }
+    if (!item.is_on) { return }
+    const updated = items.map(i => (i.id === item.id ? { ...i, is_on: false } : i));
+    persist(updated);
+  }
 
   // Helper to pause a job item
   function pauseJobItem(item: AnyConsistItem): AnyConsistItem {
@@ -238,10 +282,17 @@ const Consist: React.FC = () => {
       <a href="./#/newjob" style={{ marginLeft: 8 }}>Add Job</a>
       <p>Total weight: { totalWeight(items) }t</p>
       <p>Total length: { totalLength(items) }m</p>
+      <p>Total Load Rating (2% Dry) { totalLoadRating(items).grade_2_dry }t</p>
       <ul>
         {items.map((item, idx) => (
           <li key={idx}>
-            {isStaticItem(item) && <Locomotive item={item} />}
+            {isStaticItem(item) && (
+                <Locomotive 
+                  item={item} 
+                  onStart={() => startLocomotive(item)} 
+                  onStop={() => stopLocomotive(item)} 
+                />
+            )}
             {isJob(item) && (
               <Job
                 item={item}
