@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { AnyConsistItem, JobItem, JobStatus, StaticConsistItem } from '../types/ConsistItem';
 import { LocomotiveLoadRating, locomotives } from '../types/Locomotive';
-import { stations } from '../types/Station';
+import Dashboard from '../components/Dashboard';
+import ItemRow from '../components/ItemRow';
+import ConsistLocomotive from '../components/ConsistLocomotive';
+import Job from '../components/Job';
 
 // Type guards
 function isStaticItem(item: AnyConsistItem): item is StaticConsistItem {
@@ -63,39 +66,7 @@ function length(item: AnyConsistItem): number {
     return 0; // Default case, should not happen
 }
 
-function statusText(status: JobStatus): string {
-  switch (status) {
-    case JobStatus.NotStarted:
-      return 'Not Started';
-    case JobStatus.Active:
-      return 'Active';
-    case JobStatus.Paused:
-      return 'Paused';
-    default:
-      return 'Unknown'; 
-  }
-}
-
-function locationName(location: string): string {
-    const [station_code, yard_id, track_number] = location.split('-');
-
-    if (!station_code || !yard_id || !track_number) {
-        return location;
-    }
-
-    // Assuming you have a function or mapping to get station names by code
-    const station = stations.find(s => s.code === station_code);
-    const yard = station?.yards.find(y => y.id === yard_id);
-    const track = yard?.tracks.find(t => t.number.toString() === track_number);
-    
-    if (!station || !yard || !track) {
-        return location;
-    }
-
-    return station.name + ' ' + yard.id + ' ' + track.display_name;
-}
-
-function getBonusTimeRemaining(item: JobItem): number {
+export function getBonusTimeRemaining(item: JobItem): number {
   if (item.status === JobStatus.Active && item.end_timestamp) {
     const now = Math.floor(Date.now() / 1000);
     return Math.max(0, item.end_timestamp - now);
@@ -103,151 +74,6 @@ function getBonusTimeRemaining(item: JobItem): number {
   // If paused or not started, remaining = limit - elapsed
   return Math.max(0, item.bonus_time_limit - (item.bonus_time_elapsed || 0));
 }
-
-// Components for each concretion
-const Dashboard: React.FC<{ length: number; weight: number; load: LocomotiveLoadRating }> = ({
-  length,
-  weight,
-  load,
-}) => (
-  <div
-    style={{
-      display: 'flex',
-      gap: 24,
-      justifyContent: 'center',
-      alignItems: 'center',
-      flexWrap: 'wrap',
-      background: '#f5f7fa',
-      borderRadius: 12,
-      padding: '24px 16px',
-      marginBottom: 32,
-      boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
-    }}
-  >
-    <div style={{ minWidth: 120, textAlign: 'center' }}>
-      <div style={{ fontSize: 14, color: '#888' }}>Total Weight</div>
-      <div style={{ fontSize: 28, fontWeight: 600 }}>{weight} t</div>
-    </div>
-    <div style={{ minWidth: 120, textAlign: 'center' }}>
-      <div style={{ fontSize: 14, color: '#888' }}>Total Length</div>
-      <div style={{ fontSize: 28, fontWeight: 600 }}>{length} m</div>
-    </div>
-    <div style={{ minWidth: 180, textAlign: 'center' }}>
-      <div style={{ fontSize: 14, color: '#888' }}>Load Rating (2% Dry)</div>
-      <div style={{ fontSize: 28, fontWeight: 600 }}>{load.grade_2_dry} t</div>
-    </div>
-  </div>
-);
-
-const ItemRow: React.FC<{
-  left: React.ReactNode;
-  right: React.ReactNode;
-}> = ({ left, right }) => (
-  <div
-    style={{
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      background: '#fff',
-      borderRadius: 8,
-      padding: '16px 20px',
-      marginBottom: 16,
-      boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
-      flexWrap: 'wrap',
-      gap: 16,
-    }}
-  >
-    <div style={{ flex: 1, minWidth: 200 }}>{left}</div>
-    <div style={{ display: 'flex', gap: 8 }}>{right}</div>
-  </div>
-);
-
-const Locomotive: React.FC<{
-  item: StaticConsistItem;
-  onStart: () => void;
-  onStop: () => void;
-}> = ({ item, onStart, onStop }) => {
-  const loco = locomotives.find(l => l.id === item.id);
-
-  if (!loco) {
-    return <div><strong>Locomotive:</strong> {item.id} (Not found)</div>;
-  }
-
-  return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
-      <div>
-        <strong>Locomotive:</strong> {loco.display_name}
-        {loco.nickname && ` (${loco.nickname})`}
-        {' '}<span style={{ color: '#888' }}>(Weight: {loco.weight}, Length: {loco.length})</span>
-        {item.can_run && (
-          <>
-            <br />
-            <span style={{ fontSize: 13, color: item.is_on ? '#27ae60' : '#c0392b' }}>
-              {item.is_on ? 'Running' : 'Stopped'}
-            </span>
-          </>
-        )}
-      </div>
-      {item.can_run && (
-        <div style={{ display: 'flex', gap: 8 }}>
-          {item.is_on ? (
-            <button onClick={onStop}>Stop</button>
-          ) : (
-            <button onClick={onStart}>Start</button>
-          )}
-        </div>
-      )}
-    </div>
-  );
-};
-
-const formatTime = (seconds: number) => {
-  const mm = Math.floor(seconds / 60)
-    .toString()
-    .padStart(2, '0');
-  const ss = Math.floor(seconds % 60)
-    .toString()
-    .padStart(2, '0');
-  return `${mm}:${ss}`;
-};
-
-const Job: React.FC<{
-  item: JobItem;
-  onStart: () => void;
-  onPause: () => void;
-}> = ({ item, onStart, onPause }) => {
-  const remaining = getBonusTimeRemaining(item);
-
-  return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
-      <div>
-        <strong>Job:</strong> {item.id} <span style={{ color: '#888' }}>(Weight: {item.weight}, Length: {item.length})</span>
-        <br />
-        <span style={{ fontSize: 13 }}>
-          From <b>{locationName(item.start_location)}</b> to <b>{locationName(item.end_location)}</b>
-        </span>
-        <br />
-        {item.bonus_time_limit > 0 && (
-          <span style={{ fontSize: 13 }}>
-            Bonus Time Limit: {Math.round(item.bonus_time_limit / 60)} min |{' '}
-            <strong>Remaining: {formatTime(remaining)}</strong>
-            <br />
-          </span>
-        )}
-        <span style={{ fontSize: 13, color: '#888' }}>Status: {statusText(item.status)}</span>
-      </div>
-      {item.bonus_time_limit > 0 && (
-        <div style={{ display: 'flex', gap: 8 }}>
-          {item.status === JobStatus.NotStarted || item.status === JobStatus.Paused ? (
-            <button onClick={onStart}>Start</button>
-          ) : (
-            <button onClick={onPause}>Pause</button>
-          )}
-        </div>
-      )}
-    </div>
-  );
-};
 
 const Consist: React.FC = () => {
   const [items, setItems] = useState<AnyConsistItem[]>([]);
@@ -404,7 +230,7 @@ const Consist: React.FC = () => {
             <ItemRow
               left={
                 isStaticItem(item) ? (
-                  <Locomotive
+                  <ConsistLocomotive
                     item={item}
                     onStart={() => startLocomotive(idx)}
                     onStop={() => stopLocomotive(idx)}

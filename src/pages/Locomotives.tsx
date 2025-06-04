@@ -11,7 +11,20 @@ const addToConsist = (item: Locomotive) => {
 };
 
 const LocomotiveComponent: React.FC<{ item: Locomotive }> = ({ item }) => (
-  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#fff', borderRadius: 8, padding: '16px 20px', marginBottom: 16, boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
+  <div
+    style={{
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      background: '#fff',
+      borderRadius: 8,
+      padding: '16px 20px',
+      marginBottom: 16,
+      boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
+      flexWrap: 'wrap',
+      gap: 12,
+    }}
+  >
     <div>
       <strong>
         {item.display_name}
@@ -20,6 +33,22 @@ const LocomotiveComponent: React.FC<{ item: Locomotive }> = ({ item }) => (
       <span style={{ color: '#888' }}>
         {' '} (Weight: {item.weight}, Length: {item.length})
       </span>
+      <div style={{ fontSize: 13, color: '#555', marginTop: 4 }}>
+        <span>
+          <b>Load Ratings:</b>
+          {' '}
+          {item.load_rating
+            ? <>
+                <span>Flat Dry: {item.load_rating.grade_0_dry}t</span>
+                {' | '}
+                <span>2% Dry: {item.load_rating.grade_2_dry}t</span>
+                {' | '}
+                <span>2% Wet: {item.load_rating.grade_2_wet}t</span>
+              </>
+            : <span style={{ color: '#c0392b' }}>N/A</span>
+          }
+        </span>
+      </div>
     </div>
     <button style={{ minWidth: 120 }} onClick={() => addToConsist(item)}>
       Add to Consist

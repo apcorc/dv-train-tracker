@@ -37,7 +37,7 @@ const AutocompleteInput: React.FC<{
   onChange: (value: string) => void;
   label: string;
 }> = ({ value, onChange, label }) => {
-  const [focused, setFocused] = useState(false);
+  const [, setFocused] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [showOptions, setShowOptions] = useState(false);
   const [highlighted, setHighlighted] = useState<number>(-1);
