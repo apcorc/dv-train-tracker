@@ -79,6 +79,7 @@ const AutocompleteInput: React.FC<{
       setHighlighted(h => Math.max(h - 1, 0));
     } else if (e.key === 'Enter') {
       if (highlighted >= 0 && highlighted < filtered.length) {
+        e.preventDefault(); // Prevent form submission!
         handleSelect(filtered[highlighted]);
       }
     }
@@ -254,7 +255,7 @@ const NewJob: React.FC = () => {
           </label>
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 16 }}>
-          <button type="submit" style={{ minWidth: 120 }} disabled={!form.start_location || !form.end_location}>
+          <button type="submit" style={{ minWidth: 120 }}>
             Add Job
           </button>
         </div>
