@@ -2,6 +2,142 @@ import React, { useState } from 'react';
 import { JobItem, JobStatus } from '../types/ConsistItem';
 import { stations } from '../types/Station';
 
+interface LocationOption {
+  label: string;
+  value: string;
+  stationName?: string;
+  stationCode?: string;
+  trackNumber?: number;
+  trackName?: string;
+}
+
+function getAllLocationOptions() {
+  const options: LocationOption[] = [];
+  stations.forEach(station => {
+    station.yards.forEach(yard => {
+      yard.tracks.forEach(track => {
+        options.push({
+          label: `${station.name} - ${yard.name} - ${track.display_name}`,
+          value: `${station.code}-${yard.id}-${track.number}`,
+          stationName: station.name,
+          stationCode: station.code,
+          trackNumber: track.number,
+          trackName: track.display_name,
+        });
+      });
+    });
+  });
+  return options;
+}
+
+const allLocationOptions = getAllLocationOptions();
+
+const AutocompleteInput: React.FC<{
+  value: string;
+  onChange: (value: string) => void;
+  label: string;
+}> = ({ value, onChange, label }) => {
+  const [focused, setFocused] = useState(false);
+  const [inputValue, setInputValue] = useState('');
+  const [showOptions, setShowOptions] = useState(false);
+  const [highlighted, setHighlighted] = useState<number>(-1);
+
+  const tokens = inputValue.toLowerCase().split(' ');
+
+  const filtered = allLocationOptions.filter(option => {
+    return tokens.every(token => {
+      return option.label.toLowerCase().includes(token) 
+        || (option.stationName && option.stationName.toLowerCase().includes(token)) 
+        || (option.stationCode && option.stationCode.toLowerCase().includes(token)) 
+        || (option.trackName && option.trackName.toLowerCase().includes(token));
+    });
+  });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+    setShowOptions(true);
+    setHighlighted(-1);
+    onChange(''); // Clear value until selection
+  };
+
+  const handleSelect = (option: LocationOption) => {
+    setInputValue(option.label);
+    setShowOptions(false);
+    setHighlighted(-1);
+    onChange(option.value);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!showOptions || filtered.length === 0) return;
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setHighlighted(h => Math.min(h + 1, filtered.length - 1));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setHighlighted(h => Math.max(h - 1, 0));
+    } else if (e.key === 'Enter') {
+      if (highlighted >= 0 && highlighted < filtered.length) {
+        handleSelect(filtered[highlighted]);
+      }
+    }
+  };
+
+  React.useEffect(() => {
+    // When value changes externally, update inputValue to show label
+    const match = allLocationOptions.find(opt => opt.value === value);
+    if (match) setInputValue(match.label);
+  }, [value]);
+
+  return (
+    <div style={{ position: 'relative', width: '100%' }}>
+      <input
+        type="text"
+        value={inputValue}
+        placeholder={label}
+        onFocus={() => { setFocused(true); setShowOptions(true); }}
+        onBlur={() => setTimeout(() => setShowOptions(false), 150)}
+        onChange={handleInputChange}
+        onKeyDown={handleKeyDown}
+        style={{ width: '100%' }}
+        autoComplete="off"
+      />
+      {showOptions && (
+        <div
+          style={{
+            position: 'absolute',
+            zIndex: 10,
+            background: '#fff',
+            border: '1px solid #ccc',
+            borderRadius: 4,
+            width: '100%',
+            maxHeight: 180,
+            overflowY: 'auto',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+          }}
+        >
+          {filtered.length === 0 && (
+            <div style={{ padding: 8, color: '#888' }}>No matches</div>
+          )}
+          {filtered.map((opt, idx) => (
+            <div
+              key={opt.value}
+              style={{
+                padding: 8,
+                cursor: 'pointer',
+                background: highlighted === idx ? '#eaf1fb' : value === opt.value ? '#f0f8ff' : undefined,
+              }}
+              onMouseDown={() => handleSelect(opt)}
+              onMouseEnter={() => setHighlighted(idx)}
+            >
+              {opt.label}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 const NewJob: React.FC = () => {
   const [form, setForm] = useState<JobItem>({
     id: '',
@@ -14,58 +150,6 @@ const NewJob: React.FC = () => {
     status: JobStatus.NotStarted,
   });
 
-  const [startStation, setStartStation] = useState<string>('');
-  const [startYard, setStartYard] = useState<string>('');
-  const [startTrack, setStartTrack] = useState<string>('');
-  const [endStation, setEndStation] = useState<string>('');
-  const [endYard, setEndYard] = useState<string>('');
-  const [endTrack, setEndTrack] = useState<string>('');
-
-  const getYards = (stationCode: string) =>
-    stations.find(s => s.code === stationCode)?.yards || [];
-  const getTracks = (stationCode: string, yardId: string) =>
-    getYards(stationCode).find(y => y.id === yardId)?.tracks || [];
-
-  const handleStartPicker = (type: 'station' | 'yard' | 'track', value: string) => {
-    if (type === 'station') {
-      setStartStation(value);
-      setStartYard('');
-      setStartTrack('');
-      setForm(f => ({ ...f, start_location: '' }));
-    } else if (type === 'yard') {
-      setStartYard(value);
-      setStartTrack('');
-      setForm(f => ({ ...f, start_location: '' }));
-    } else if (type === 'track') {
-      setStartTrack(value);
-      const station = stations.find(s => s.code === startStation);
-      const track = getTracks(startStation, startYard).find(t => t.display_name === value);
-      if (station && track) {
-        setForm(f => ({ ...f, start_location: `${station.code}-${track.display_name}` }));
-      }
-    }
-  };
-
-  const handleEndPicker = (type: 'station' | 'yard' | 'track', value: string) => {
-    if (type === 'station') {
-      setEndStation(value);
-      setEndYard('');
-      setEndTrack('');
-      setForm(f => ({ ...f, end_location: '' }));
-    } else if (type === 'yard') {
-      setEndYard(value);
-      setEndTrack('');
-      setForm(f => ({ ...f, end_location: '' }));
-    } else if (type === 'track') {
-      setEndTrack(value);
-      const station = stations.find(s => s.code === endStation);
-      const track = getTracks(endStation, endYard).find(t => t.display_name === value);
-      if (station && track) {
-        setForm(f => ({ ...f, end_location: `${station.code}-${track.display_name}` }));
-      }
-    }
-  };
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setForm(prev => ({
@@ -76,6 +160,13 @@ const NewJob: React.FC = () => {
           : name === 'bonus_time_limit'
           ? Math.round(Number(value) * 60)
           : value,
+    }));
+  };
+
+  const handleLocationChange = (field: 'start_location' | 'end_location', value: string) => {
+    setForm(prev => ({
+      ...prev,
+      [field]: value,
     }));
   };
 
@@ -132,63 +223,25 @@ const NewJob: React.FC = () => {
         <div>
           <label>
             Start Location:
-            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 4 }}>
-              <select value={startStation} onChange={e => handleStartPicker('station', e.target.value)}>
-                <option value="">Select Station</option>
-                {stations.map(station => (
-                  <option key={station.code} value={station.code}>{station.name}</option>
-                ))}
-              </select>
-              {startStation && (
-                <select value={startYard} onChange={e => handleStartPicker('yard', e.target.value)}>
-                  <option value="">Select Yard</option>
-                  {getYards(startStation).map(yard => (
-                    <option key={yard.id} value={yard.id}>{yard.name}</option>
-                  ))}
-                </select>
-              )}
-              {startStation && startYard && (
-                <select value={startTrack} onChange={e => handleStartPicker('track', e.target.value)}>
-                  <option value="">Select Track</option>
-                  {getTracks(startStation, startYard).map(track => (
-                    <option key={track.display_name} value={track.display_name}>{track.display_name}</option>
-                  ))}
-                </select>
-              )}
-            </div>
+            <AutocompleteInput
+              value={form.start_location}
+              onChange={v => handleLocationChange('start_location', v)}
+              label="Start Location"
+            />
           </label>
         </div>
         <div>
           <label>
             End Location:
-            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 4 }}>
-              <select value={endStation} onChange={e => handleEndPicker('station', e.target.value)}>
-                <option value="">Select Station</option>
-                {stations.map(station => (
-                  <option key={station.code} value={station.code}>{station.name}</option>
-                ))}
-              </select>
-              {endStation && (
-                <select value={endYard} onChange={e => handleEndPicker('yard', e.target.value)}>
-                  <option value="">Select Yard</option>
-                  {getYards(endStation).map(yard => (
-                    <option key={yard.id} value={yard.id}>{yard.name}</option>
-                  ))}
-                </select>
-              )}
-              {endStation && endYard && (
-                <select value={endTrack} onChange={e => handleEndPicker('track', e.target.value)}>
-                  <option value="">Select Track</option>
-                  {getTracks(endStation, endYard).map(track => (
-                    <option key={track.display_name} value={track.display_name}>{track.display_name}</option>
-                  ))}
-                </select>
-              )}
-            </div>
+            <AutocompleteInput
+              value={form.end_location}
+              onChange={v => handleLocationChange('end_location', v)}
+              label="End Location"
+            />
           </label>
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 16 }}>
-          <button type="submit" style={{ minWidth: 120 }}>
+          <button type="submit" style={{ minWidth: 120 }} disabled={!form.start_location || !form.end_location}>
             Add Job
           </button>
         </div>
