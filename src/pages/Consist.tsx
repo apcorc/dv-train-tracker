@@ -225,6 +225,7 @@ const Job: React.FC<{
 const Consist: React.FC = () => {
   const [items, setItems] = useState<AnyConsistItem[]>([]);
   const [, setTick] = useState(0);
+  const [draggedIdx, setDraggedIdx] = useState<number | null>(null);
 
   useEffect(() => {
     const stored = localStorage.getItem('consistItems');
@@ -347,57 +348,81 @@ const Consist: React.FC = () => {
           <div style={{ textAlign: 'center', color: '#888', marginTop: 40 }}>No items in consist.</div>
         )}
         {items.map((item, idx) => (
-          <ItemRow
+          <div
             key={idx}
-            left={
-              isStaticItem(item) ? (
-                <Locomotive
-                  item={item}
-                  onStart={() => startLocomotive(item)}
-                  onStop={() => stopLocomotive(item)}
-                />
-              ) : isJob(item) ? (
-                <Job
-                  item={item}
-                  onStart={() => startJob(idx)}
-                  onPause={() => pauseJob(idx)}
-                />
-              ) : null
-            }
-            right={
-              <div style={{ display: 'flex', gap: 6 }}>
-                <button onClick={() => removeItem(idx)}>Remove</button>
-                <button
-                  onClick={() => moveItem(idx, idx - 1)}
-                  disabled={idx === 0}
-                  title="Move Up"
-                >
-                  ↑
-                </button>
-                <button
-                  onClick={() => moveItem(idx, idx + 1)}
-                  disabled={idx === items.length - 1}
-                  title="Move Down"
-                >
-                  ↓
-                </button>
-                {isStaticItem(item) && (
-                  item.is_on ? (
-                    <button onClick={() => stopLocomotive(item)}>Stop</button>
-                  ) : (
-                    <button onClick={() => startLocomotive(item)}>Start</button>
-                  )
-                )}
-                {isJob(item) && (
-                  item.status === JobStatus.NotStarted || item.status === JobStatus.Paused ? (
-                    <button onClick={() => startJob(idx)}>Start</button>
-                  ) : (
-                    <button onClick={() => pauseJob(idx)}>Pause</button>
-                  )
-                )}
-              </div>
-            }
-          />
+            draggable
+            onDragStart={() => setDraggedIdx(idx)}
+            onDragOver={e => {
+              e.preventDefault();
+              if (draggedIdx === null || draggedIdx === idx) return;
+              const updated = [...items];
+              const [dragged] = updated.splice(draggedIdx, 1);
+              updated.splice(idx, 0, dragged);
+              setDraggedIdx(idx);
+              setItems(updated);
+            }}
+            onDragEnd={() => {
+              setDraggedIdx(null);
+              persist(items);
+            }}
+            style={{
+              opacity: draggedIdx === idx ? 0.7 : 1,
+              userSelect: 'none',
+              marginBottom: 8,
+              cursor: 'move',
+            }}
+          >
+            <ItemRow
+              left={
+                isStaticItem(item) ? (
+                  <Locomotive
+                    item={item}
+                    onStart={() => startLocomotive(item)}
+                    onStop={() => stopLocomotive(item)}
+                  />
+                ) : isJob(item) ? (
+                  <Job
+                    item={item}
+                    onStart={() => startJob(idx)}
+                    onPause={() => pauseJob(idx)}
+                  />
+                ) : null
+              }
+              right={
+                <div style={{ display: 'flex', gap: 6 }}>
+                  <button onClick={() => removeItem(idx)}>Remove</button>
+                  <button
+                    onClick={() => moveItem(idx, idx - 1)}
+                    disabled={idx === 0}
+                    title="Move Up"
+                  >
+                    ↑
+                  </button>
+                  <button
+                    onClick={() => moveItem(idx, idx + 1)}
+                    disabled={idx === items.length - 1}
+                    title="Move Down"
+                  >
+                    ↓
+                  </button>
+                  {isStaticItem(item) && (
+                    item.is_on ? (
+                      <button onClick={() => stopLocomotive(item)}>Stop</button>
+                    ) : (
+                      <button onClick={() => startLocomotive(item)}>Start</button>
+                    )
+                  )}
+                  {isJob(item) && (
+                    item.status === JobStatus.NotStarted || item.status === JobStatus.Paused ? (
+                      <button onClick={() => startJob(idx)}>Start</button>
+                    ) : (
+                      <button onClick={() => pauseJob(idx)}>Pause</button>
+                    )
+                  )}
+                </div>
+              }
+            />
+          </div>
         ))}
       </div>
     </div>
