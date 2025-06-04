@@ -105,10 +105,67 @@ function getBonusTimeRemaining(item: JobItem): number {
 }
 
 // Components for each concretion
-const Locomotive: React.FC<{ 
-    item: StaticConsistItem;
-    onStart: () => void;
-    onStop: () => void; 
+const Dashboard: React.FC<{ length: number; weight: number; load: LocomotiveLoadRating }> = ({
+  length,
+  weight,
+  load,
+}) => (
+  <div
+    style={{
+      display: 'flex',
+      gap: 24,
+      justifyContent: 'center',
+      alignItems: 'center',
+      flexWrap: 'wrap',
+      background: '#f5f7fa',
+      borderRadius: 12,
+      padding: '24px 16px',
+      marginBottom: 32,
+      boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
+    }}
+  >
+    <div style={{ minWidth: 120, textAlign: 'center' }}>
+      <div style={{ fontSize: 14, color: '#888' }}>Total Weight</div>
+      <div style={{ fontSize: 28, fontWeight: 600 }}>{weight} t</div>
+    </div>
+    <div style={{ minWidth: 120, textAlign: 'center' }}>
+      <div style={{ fontSize: 14, color: '#888' }}>Total Length</div>
+      <div style={{ fontSize: 28, fontWeight: 600 }}>{length} m</div>
+    </div>
+    <div style={{ minWidth: 180, textAlign: 'center' }}>
+      <div style={{ fontSize: 14, color: '#888' }}>Load Rating (2% Dry)</div>
+      <div style={{ fontSize: 28, fontWeight: 600 }}>{load.grade_2_dry} t</div>
+    </div>
+  </div>
+);
+
+const ItemRow: React.FC<{
+  left: React.ReactNode;
+  right: React.ReactNode;
+}> = ({ left, right }) => (
+  <div
+    style={{
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      background: '#fff',
+      borderRadius: 8,
+      padding: '16px 20px',
+      marginBottom: 16,
+      boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
+      flexWrap: 'wrap',
+      gap: 16,
+    }}
+  >
+    <div style={{ flex: 1, minWidth: 200 }}>{left}</div>
+    <div style={{ display: 'flex', gap: 8 }}>{right}</div>
+  </div>
+);
+
+const Locomotive: React.FC<{
+  item: StaticConsistItem;
+  onStart: () => void;
+  onStop: () => void;
 }> = ({ item, onStart, onStop }) => {
   // Find the locomotive by id
   const loco = locomotives.find(l => l.id === item.id);
@@ -121,12 +178,11 @@ const Locomotive: React.FC<{
     <div>
       <strong>Locomotive:</strong> {loco.display_name}
       {loco.nickname && ` (${loco.nickname})`}
-      {' '} (Weight: {loco.weight}, Length: {loco.length}) <br />
-      {item.is_on ? (
-        <button style={{ marginLeft: 8 }} onClick={onStop}>Stop</button>
-      ) : (
-        <button style={{ marginLeft: 8 }} onClick={onStart}>Start</button>
-      )}
+      {' '}<span style={{ color: '#888' }}>(Weight: {loco.weight}, Length: {loco.length})</span>
+      <br />
+      <span style={{ fontSize: 13, color: item.is_on ? '#27ae60' : '#c0392b' }}>
+        {item.is_on ? 'Running' : 'Stopped'}
+      </span>
     </div>
   );
 };
@@ -150,31 +206,31 @@ const Job: React.FC<{
 
   return (
     <div>
-      <strong>Job:</strong> {item.id} (Weight: {item.weight}, Length: {item.length})
+      <strong>Job:</strong> {item.id} <span style={{ color: '#888' }}>(Weight: {item.weight}, Length: {item.length})</span>
       <br />
-      From {locationName(item.start_location)} to {locationName(item.end_location)}.<br />
-      Bonus Time Limit: {Math.round(item.bonus_time_limit / 60)} min<br />
-      <strong>Bonus Time Remaining: {formatTime(remaining)}</strong><br />
-      Status: {statusText(item.status)}
-      {item.status === JobStatus.NotStarted || item.status === JobStatus.Paused ? (
-        <button style={{ marginLeft: 8 }} onClick={onStart}>Start</button>
-      ) : (
-        <button style={{ marginLeft: 8 }} onClick={onPause}>Pause</button>
-      )}
+      <span style={{ fontSize: 13 }}>
+        From <b>{locationName(item.start_location)}</b> to <b>{locationName(item.end_location)}</b>
+      </span>
+      <br />
+      <span style={{ fontSize: 13 }}>
+        Bonus Time Limit: {Math.round(item.bonus_time_limit / 60)} min |{' '}
+        <strong>Remaining: {formatTime(remaining)}</strong>
+      </span>
+      <br />
+      <span style={{ fontSize: 13, color: '#888' }}>Status: {statusText(item.status)}</span>
     </div>
   );
 };
 
 const Consist: React.FC = () => {
   const [items, setItems] = useState<AnyConsistItem[]>([]);
-  const [, setTick] = useState(0); // for re-rendering timer
+  const [, setTick] = useState(0);
 
   useEffect(() => {
     const stored = localStorage.getItem('consistItems');
     if (stored) {
       setItems(JSON.parse(stored));
     }
-    // Timer to update remaining time every second
     const interval = setInterval(() => setTick(t => t + 1), 1000);
     return () => clearInterval(interval);
   }, []);
@@ -273,55 +329,77 @@ const Consist: React.FC = () => {
   const allPaused = jobs.length > 0 && jobs.every(j => j.status !== JobStatus.Active);
 
   return (
-    <div>
-      <h1>Consist</h1>
-      <button onClick={allPaused ? resumeAll : pauseAll}>
-        {allPaused ? 'Resume All' : 'Pause All'}
-      </button>
-      <a href="./#/locomotives" style={{ marginLeft: 16 }}>Add Locomotive</a>
-      <a href="./#/newjob" style={{ marginLeft: 8 }}>Add Job</a>
-      <p>Total weight: { totalWeight(items) }t</p>
-      <p>Total length: { totalLength(items) }m</p>
-      <p>Total Load Rating (2% Dry) { totalLoadRating(items).grade_2_dry }t</p>
-      <ul>
+    <div style={{ maxWidth: 800, margin: '0 auto', padding: '24px 8px' }}>
+      <Dashboard
+        length={totalLength(items)}
+        weight={totalWeight(items)}
+        load={totalLoadRating(items)}
+      />
+      <div style={{ display: 'flex', justifyContent: 'center', gap: 12, marginBottom: 24, flexWrap: 'wrap' }}>
+        <button onClick={allPaused ? resumeAll : pauseAll} style={{ minWidth: 120 }}>
+          {allPaused ? 'Resume All' : 'Pause All'}
+        </button>
+        <a href="./#/locomotives" style={{ minWidth: 120, textAlign: 'center', lineHeight: '32px', background: '#eaf1fb', borderRadius: 6, padding: '0 12px', textDecoration: 'none' }}>Add Locomotive</a>
+        <a href="./#/newjob" style={{ minWidth: 120, textAlign: 'center', lineHeight: '32px', background: '#eaf1fb', borderRadius: 6, padding: '0 12px', textDecoration: 'none' }}>Add Job</a>
+      </div>
+      <div>
+        {items.length === 0 && (
+          <div style={{ textAlign: 'center', color: '#888', marginTop: 40 }}>No items in consist.</div>
+        )}
         {items.map((item, idx) => (
-          <li key={idx}>
-            {isStaticItem(item) && (
-                <Locomotive 
-                  item={item} 
-                  onStart={() => startLocomotive(item)} 
-                  onStop={() => stopLocomotive(item)} 
+          <ItemRow
+            key={idx}
+            left={
+              isStaticItem(item) ? (
+                <Locomotive
+                  item={item}
+                  onStart={() => startLocomotive(item)}
+                  onStop={() => stopLocomotive(item)}
                 />
-            )}
-            {isJob(item) && (
-              <Job
-                item={item}
-                onStart={() => startJob(idx)}
-                onPause={() => pauseJob(idx)}
-              />
-            )}
-            <button style={{ marginLeft: 8 }} onClick={() => removeItem(idx)}>
-              Remove
-            </button>
-            <button
-              style={{ marginLeft: 4 }}
-              onClick={() => moveItem(idx, idx - 1)}
-              disabled={idx === 0}
-              title="Move Up"
-            >
-              ↑
-            </button>
-            <button
-              style={{ marginLeft: 2 }}
-              onClick={() => moveItem(idx, idx + 1)}
-              disabled={idx === items.length - 1}
-              title="Move Down"
-            >
-              ↓
-            </button>
-          </li>
+              ) : isJob(item) ? (
+                <Job
+                  item={item}
+                  onStart={() => startJob(idx)}
+                  onPause={() => pauseJob(idx)}
+                />
+              ) : null
+            }
+            right={
+              <div style={{ display: 'flex', gap: 6 }}>
+                <button onClick={() => removeItem(idx)}>Remove</button>
+                <button
+                  onClick={() => moveItem(idx, idx - 1)}
+                  disabled={idx === 0}
+                  title="Move Up"
+                >
+                  ↑
+                </button>
+                <button
+                  onClick={() => moveItem(idx, idx + 1)}
+                  disabled={idx === items.length - 1}
+                  title="Move Down"
+                >
+                  ↓
+                </button>
+                {isStaticItem(item) && (
+                  item.is_on ? (
+                    <button onClick={() => stopLocomotive(item)}>Stop</button>
+                  ) : (
+                    <button onClick={() => startLocomotive(item)}>Start</button>
+                  )
+                )}
+                {isJob(item) && (
+                  item.status === JobStatus.NotStarted || item.status === JobStatus.Paused ? (
+                    <button onClick={() => startJob(idx)}>Start</button>
+                  ) : (
+                    <button onClick={() => pauseJob(idx)}>Pause</button>
+                  )
+                )}
+              </div>
+            }
+          />
         ))}
-      </ul>
+      </div>
     </div>
   );
 };
