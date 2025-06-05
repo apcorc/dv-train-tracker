@@ -19,10 +19,17 @@ export interface JobItem extends ConsistItem {
     bonus_time_elapsed: number;
     status: JobStatus;
     end_timestamp?: EpochTimeStamp;
+    type: JobType;
 }
 
 export enum JobStatus {
   NotStarted = "not_started",
   Active = "active",
   Paused = "paused",
+}
+
+export enum JobType {
+    Freight = "frieght",
+    Shunting = "shunting",
+    Logistics = "logistics",
 }

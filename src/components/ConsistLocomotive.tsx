@@ -14,7 +14,14 @@ const ConsistLocomotive: React.FC<{
     }
 
     return (
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
+        <div style={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center', 
+            flexWrap: 'wrap', 
+            gap: 8, 
+            padding: '16px 0px 16px 20px' 
+        }}>
             <div>
                 <strong>Locomotive:</strong> {loco.display_name}
                 {loco.nickname && ` (${loco.nickname})`}

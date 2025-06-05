@@ -1,5 +1,5 @@
 import React from 'react';
-import { JobItem, JobStatus } from '../types/ConsistItem';
+import { JobItem, JobStatus, JobType } from '../types/ConsistItem';
 import { getBonusTimeRemaining } from '../pages/Consist';
 import { stations } from '../types/Station';
 
@@ -42,7 +42,20 @@ function locationName(location: string): string {
         return location;
     }
 
-    return station.name + ' ' + yard.id + ' ' + track.display_name;
+    return station.name + ' ' + track.display_name;
+}
+
+function jobTypeColor(type?: JobType): string {
+    switch (type) {
+        case JobType.Freight:
+            return '#27ae60'; // green
+        case JobType.Shunting:
+            return '#c0392b'; // red
+        case JobType.Logistics:
+            return '#f1c40f'; // yellow
+        default:
+            return '#bbb';    // gray
+    }
 }
 
 const Job: React.FC<{
@@ -53,24 +66,63 @@ const Job: React.FC<{
     const remaining = getBonusTimeRemaining(item);
 
     return (
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
-            <div>
-                <strong>Job:</strong> {item.id} <span style={{ color: '#888' }}>(Weight: {item.weight}, Length: {item.length})</span>
-                <br />
-                <span style={{ fontSize: 13 }}>
-                    From <b>{locationName(item.start_location)}</b> to <b>{locationName(item.end_location)}</b>
-                </span>
-                <br />
-                {item.bonus_time_limit > 0 && (
-                    <span style={{ fontSize: 13 }}>
-                        Bonus Time Limit: {Math.round(item.bonus_time_limit / 60)} min |{' '}
-                        <strong>Remaining: {formatTime(remaining)}</strong>
-                        <br />
-                    </span>
-                )}
-                <span style={{ fontSize: 13, color: '#888' }}>Status: {statusText(item.status)}</span>
-            </div>
-            {item.bonus_time_limit > 0 && (
+        <div style={{
+            display: 'flex',
+            alignItems: 'stretch',
+            flexWrap: 'wrap',
+            gap: 8,
+        }}>
+            {/* Colored stripe */}
+            <div
+                style={{
+                    width: 6,
+                    borderTopLeftRadius: 8,
+                    borderBottomLeftRadius: 8,
+                    borderTopRightRadius: 0,
+                    borderBottomRightRadius: 0,
+                    background: jobTypeColor(item.type),
+                    marginRight: 6,
+                    minHeight: 56,
+                }}
+            />
+            {/* Main content */}
+            <div style={{
+                flex: 1,
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                gap: 8,
+            }}>
+                <div>
+                    <span>{item.id}</span>
+                    <br />
+                    {(item.weight > 0) && (
+                        <span style={{ color: '#888', paddingRight: 8 }}>
+                            Weight: {item.weight}
+                        </span>
+                    )}
+                    {(item.length > 0) && (
+                        <span style={{ color: '#888' }}>
+                            Length: {item.length}
+                        </span>
+                    )}
+                    {(item.weight > 0 || item.length > 0) && <br />}
+                    {(item.start_location || item.end_location) && (
+                        <span style={{ fontSize: 13 }}>
+                            From <b>{locationName(item.start_location)}</b> to <b>{locationName(item.end_location)}</b>
+                            <br />
+                        </span>
+                    )}
+                    {item.bonus_time_limit > 0 && (
+                        <span style={{ fontSize: 13 }}>
+                            Bonus Time Limit: {Math.round(item.bonus_time_limit / 60)} min |{' '}
+                            <strong>Remaining: {formatTime(remaining)}</strong>
+                            <br />
+                        </span>
+                    )}
+                    <span style={{ fontSize: 13, color: '#888' }}>Status: {statusText(item.status)}</span>
+                </div>
                 <div style={{ display: 'flex', gap: 8 }}>
                     {item.status === JobStatus.NotStarted || item.status === JobStatus.Paused ? (
                         <button onClick={onStart}>Start</button>
@@ -78,7 +130,7 @@ const Job: React.FC<{
                         <button onClick={onPause}>Pause</button>
                     )}
                 </div>
-            )}
+            </div>
         </div>
     );
 };

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { JobItem, JobStatus } from '../types/ConsistItem';
+import { JobItem, JobStatus, JobType } from '../types/ConsistItem';
 import { stations } from '../types/Station';
 import { AutocompleteInput } from '../components//AutocompleteInput';
 
@@ -13,6 +13,7 @@ const NewJob: React.FC = () => {
     bonus_time_limit: 0,
     bonus_time_elapsed: 0,
     status: JobStatus.NotStarted,
+    type: JobType.Freight,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -35,12 +36,41 @@ const NewJob: React.FC = () => {
     }));
   };
 
+  const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { value } = e.target;
+    setForm(prev => ({
+      ...prev,
+      type: value as JobType,
+    }));
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const existing = JSON.parse(localStorage.getItem('consistItems') || '[]');
-    localStorage.setItem('consistItems', JSON.stringify([...existing, form]));
+    
+    // Generate default ID if empty
+    const formToSubmit = { ...form };
+    if (!formToSubmit.id.trim()) {
+      const existingJobs = existing.filter((item: any) => 'start_location' in item);
+      formToSubmit.id = `Job ${existingJobs.length + 1}`;
+    }
+
+    localStorage.setItem('consistItems', JSON.stringify([...existing, formToSubmit]));
     window.location.hash = '/#';
   };
+
+  function jobTypeString(type: JobType): string {
+    switch (type) {
+        case JobType.Freight:
+            return 'Freight';
+        case JobType.Shunting:
+            return 'Shunting';
+        case JobType.Logistics:
+            return 'Logistics';
+        default:
+            return 'Unknown';
+    }
+  }
 
   return (
     <div style={{ maxWidth: 600, margin: '0 auto', padding: '24px 8px' }}>
@@ -60,9 +90,19 @@ const NewJob: React.FC = () => {
       >
         <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
           <label style={{ flex: 1, minWidth: 160 }}>
+            Job Type:
+            <select name="type" value={form.type} onChange={handleTypeChange} style={{ width: '100%' }}>
+                {Object.values(JobType).map((type) => (
+                    <option value={type}>{jobTypeString(type)}</option>
+                ))}
+            </select>
+          </label>
+          <label style={{ flex: 1, minWidth: 160 }}>
             ID:
             <input name="id" value={form.id} onChange={handleChange} style={{ width: '100%' }} />
           </label>
+        </div>
+        <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
           <label style={{ flex: 1, minWidth: 120 }}>
             Weight:
             <input name="weight" type="number" value={form.weight} onChange={handleChange} style={{ width: '100%' }} />
@@ -71,10 +111,8 @@ const NewJob: React.FC = () => {
             Length:
             <input name="length" type="number" value={form.length} onChange={handleChange} style={{ width: '100%' }} />
           </label>
-        </div>
-        <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
-          <label style={{ flex: 1, minWidth: 180 }}>
-            Bonus Time Limit (minutes):
+          <label style={{ flex: 1, minWidth: 160 }}>
+            Time Bonus:
             <input
               name="bonus_time_limit"
               type="number"

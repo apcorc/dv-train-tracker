@@ -11,7 +11,7 @@ const ItemRow: React.FC<{
             alignItems: 'center',
             background: '#fff',
             borderRadius: 8,
-            padding: '16px 20px',
+            paddingRight: 16,
             marginBottom: 16,
             boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
             flexWrap: 'wrap',
