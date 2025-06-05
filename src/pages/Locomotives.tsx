@@ -1,13 +1,13 @@
 import React from 'react';
 import { Locomotive, locomotives } from '../types/Locomotive';
 import { StaticConsistItem } from '../types/ConsistItem';
-
+import { Link } from 'react-router-dom';
 
 const addToConsist = (item: Locomotive) => {
   const newItem: StaticConsistItem = { id: item.id, isStatic: true, is_on: true, can_run: item.load_rating !== null };
   const existing = JSON.parse(localStorage.getItem('consistItems') || '[]');
   localStorage.setItem('consistItems', JSON.stringify([...existing, newItem]));
-  window.location.hash = '/#';
+  window.location.href = `${process.env.PUBLIC_URL}/`;
 };
 
 const LocomotiveComponent: React.FC<{ item: Locomotive }> = ({ item }) => (
@@ -60,7 +60,7 @@ const Locomotives: React.FC = () => {
   return (
     <div style={{ maxWidth: 700, margin: '0 auto', padding: '24px 8px' }}>
       <h1 style={{ textAlign: 'center', marginBottom: 16 }}>Add Locomotive</h1>
-      <a href="/#" style={{ color: '#337ab7', textDecoration: 'none', marginBottom: 24, display: 'inline-block' }}>Back to Consist</a>
+      <Link to="/" style={{ color: '#337ab7', textDecoration: 'none', marginBottom: 24, display: 'inline-block' }}>Back to Consist</Link>
       <div>
         {locomotives.map((item, idx) => (
           <LocomotiveComponent key={idx} item={item} />

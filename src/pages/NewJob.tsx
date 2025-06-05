@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { JobItem, JobStatus, JobType } from '../types/ConsistItem';
 import { stations } from '../types/Station';
 import { AutocompleteInput } from '../components//AutocompleteInput';
+import { Link } from 'react-router-dom';
 
 const NewJob: React.FC = () => {
   const [form, setForm] = useState<JobItem>({
@@ -56,7 +57,7 @@ const NewJob: React.FC = () => {
     }
 
     localStorage.setItem('consistItems', JSON.stringify([...existing, formToSubmit]));
-    window.location.hash = '/#';
+    window.location.href = `${process.env.PUBLIC_URL}/`;
   };
 
   function jobTypeString(type: JobType): string {
@@ -75,7 +76,7 @@ const NewJob: React.FC = () => {
   return (
     <div style={{ maxWidth: 600, margin: '0 auto', padding: '24px 8px' }}>
       <h1 style={{ textAlign: 'center', marginBottom: 16 }}>Add Job</h1>
-      <a href="/#" style={{ color: '#337ab7', textDecoration: 'none', marginBottom: 24, display: 'inline-block' }}>Back to Consist</a>
+      <Link to="/" style={{ color: '#337ab7', textDecoration: 'none', marginBottom: 24, display: 'inline-block' }}>Back to Consist</Link>
       <form
         onSubmit={handleSubmit}
         style={{

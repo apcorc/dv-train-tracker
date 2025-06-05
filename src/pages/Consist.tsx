@@ -5,6 +5,7 @@ import Dashboard from '../components/Dashboard';
 import ItemRow from '../components/ItemRow';
 import ConsistLocomotive from '../components/ConsistLocomotive';
 import Job from '../components/Job';
+import { Link } from 'react-router-dom';
 
 // Type guards
 function isStaticItem(item: AnyConsistItem): item is StaticConsistItem {
@@ -195,8 +196,8 @@ const Consist: React.FC = () => {
         <button onClick={allPaused ? resumeAll : pauseAll} style={{ minWidth: 120 }}>
           {allPaused ? 'Resume All Jobs' : 'Pause All Jobs'}
         </button>
-        <a href="./#/locomotives" style={{ minWidth: 120, textAlign: 'center', lineHeight: '32px', background: '#eaf1fb', borderRadius: 6, padding: '0 12px', textDecoration: 'none' }}>Add Locomotive</a>
-        <a href="./#/newjob" style={{ minWidth: 120, textAlign: 'center', lineHeight: '32px', background: '#eaf1fb', borderRadius: 6, padding: '0 12px', textDecoration: 'none' }}>Add Job</a>
+        <Link to="/locomotives" style={{ minWidth: 120, textAlign: 'center', lineHeight: '32px', background: '#eaf1fb', borderRadius: 6, padding: '0 12px', textDecoration: 'none' }}>Add Locomotive</Link>
+        <Link to="/newjob" style={{ minWidth: 120, textAlign: 'center', lineHeight: '32px', background: '#eaf1fb', borderRadius: 6, padding: '0 12px', textDecoration: 'none' }}>Add Job</Link>
       </div>
       <div>
         {items.length === 0 && (
