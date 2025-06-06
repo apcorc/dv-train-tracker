@@ -1,17 +1,17 @@
 {
   "files": {
-    "main.js": "/dv-train-tracker/static/js/main.19abd9ea.chunk.js",
-    "main.js.map": "/dv-train-tracker/static/js/main.19abd9ea.chunk.js.map",
+    "main.js": "/dv-train-tracker/static/js/main.77d9371d.chunk.js",
+    "main.js.map": "/dv-train-tracker/static/js/main.77d9371d.chunk.js.map",
     "runtime-main.js": "/dv-train-tracker/static/js/runtime-main.e49c6d85.js",
     "runtime-main.js.map": "/dv-train-tracker/static/js/runtime-main.e49c6d85.js.map",
-    "static/js/2.dc73b8f7.chunk.js": "/dv-train-tracker/static/js/2.dc73b8f7.chunk.js",
-    "static/js/2.dc73b8f7.chunk.js.map": "/dv-train-tracker/static/js/2.dc73b8f7.chunk.js.map",
+    "static/js/2.ea1bdeb6.chunk.js": "/dv-train-tracker/static/js/2.ea1bdeb6.chunk.js",
+    "static/js/2.ea1bdeb6.chunk.js.map": "/dv-train-tracker/static/js/2.ea1bdeb6.chunk.js.map",
     "index.html": "/dv-train-tracker/index.html",
-    "static/js/2.dc73b8f7.chunk.js.LICENSE.txt": "/dv-train-tracker/static/js/2.dc73b8f7.chunk.js.LICENSE.txt"
+    "static/js/2.ea1bdeb6.chunk.js.LICENSE.txt": "/dv-train-tracker/static/js/2.ea1bdeb6.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.e49c6d85.js",
-    "static/js/2.dc73b8f7.chunk.js",
-    "static/js/main.19abd9ea.chunk.js"
+    "static/js/2.ea1bdeb6.chunk.js",
+    "static/js/main.77d9371d.chunk.js"
   ]
 }
