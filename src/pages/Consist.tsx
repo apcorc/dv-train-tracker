@@ -183,7 +183,10 @@ const Consist: React.FC = () => {
 
   // Determine if all jobs are paused (and at least one is a job)
   const jobs = items.filter(isJob);
-  const allPaused = jobs.length > 0 && jobs.every(j => j.status !== JobStatus.Active);
+  const noJobs = jobs.length === 0;
+  const anyActiveJobs = jobs.some(j => j.status === JobStatus.Active);
+  const allNotStarted = jobs.every(j => j.status === JobStatus.NotStarted);
+  const anyPausedJobs = jobs.some(j => j.status === JobStatus.Paused);
 
   return (
     <div style={{ maxWidth: 800, margin: '0 auto', padding: '24px 8px' }}>
@@ -193,9 +196,22 @@ const Consist: React.FC = () => {
         load={totalLoadRating(items)}
       />
       <div style={{ display: 'flex', justifyContent: 'center', gap: 12, marginBottom: 24, flexWrap: 'wrap' }}>
-        <button onClick={allPaused ? resumeAll : pauseAll} style={{ minWidth: 120 }}>
-          {allPaused ? 'Resume All Jobs' : 'Pause All Jobs'}
-        </button>
+        {
+            (noJobs || allNotStarted) && (
+                <Link to="#" style={{ minWidth: 120, textAlign: 'center', lineHeight: '32px', background: '#eee', color: '#ccc', borderRadius: 6, padding: '0 12px', textDecoration: 'none', cursor: 'default' }}>Jobs Not Started</Link>
+            )
+        }
+        {
+            anyPausedJobs && (
+                <Link to="#" onClick={resumeAll} style={{ minWidth: 120, textAlign: 'center', lineHeight: '32px', background: '#eaf1fb', borderRadius: 6, padding: '0 12px', textDecoration: 'none' }}>Resume All Jobs</Link>
+            )
+        }
+        {
+            anyActiveJobs && (
+                <Link to="#" onClick={pauseAll} style={{ minWidth: 120, textAlign: 'center', lineHeight: '32px', background: '#eaf1fb', borderRadius: 6, padding: '0 12px', textDecoration: 'none' }}>Pause All Jobs</Link>
+            )
+        }
+        
         <Link to="/locomotives" style={{ minWidth: 120, textAlign: 'center', lineHeight: '32px', background: '#eaf1fb', borderRadius: 6, padding: '0 12px', textDecoration: 'none' }}>Add Locomotive</Link>
         <Link to="/newjob" style={{ minWidth: 120, textAlign: 'center', lineHeight: '32px', background: '#eaf1fb', borderRadius: 6, padding: '0 12px', textDecoration: 'none' }}>Add Job</Link>
       </div>

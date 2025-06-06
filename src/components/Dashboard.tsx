@@ -6,8 +6,8 @@ const getLoadColor = (weight: number, load: number) => {
     const ratio = weight / load;
     if (ratio < 0.75) return '#27ae60'; // green
     if (ratio < 0.85) return '#f1c40f'; // yellow
-    if (ratio < 1) return '#e67e22';   // orange
-    return '#c0392b';                  // red
+    if (ratio < 1) return '#e67e22';    // orange
+    return '#c0392b';                   // red
 };
 
 const Dashboard: React.FC<{ length: number; weight: number; load: LocomotiveLoadRating; }> = ({
@@ -19,34 +19,92 @@ const Dashboard: React.FC<{ length: number; weight: number; load: LocomotiveLoad
         <div
             style={{
                 display: 'flex',
-                gap: 24,
                 justifyContent: 'center',
-                alignItems: 'center',
-                flexWrap: 'wrap',
-                background: '#f5f7fa',
-                borderRadius: 12,
-                padding: '24px 16px',
-                marginBottom: 32,
-                boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
             }}
         >
-            <div style={{ minWidth: 120, textAlign: 'center' }}>
-                <div style={{ fontSize: 14, color: '#888' }}>Total Weight</div>
-                <div style={{ fontSize: 28, fontWeight: 600 }}>{weight}t</div>
-            </div>
-            <div style={{ minWidth: 120, textAlign: 'center' }}>
-                <div style={{ fontSize: 14, color: '#888' }}>Total Length</div>
-                <div style={{ fontSize: 28, fontWeight: 600 }}>{length}m</div>
-            </div>
-            <div style={{ minWidth: 180, textAlign: 'center' }}>
-                <div style={{ fontSize: 14, color: '#888' }}>Load Rating</div>
-                <div style={{ fontSize: 32, fontWeight: 700, color }}>
-                    {load.grade_2_dry}t
+            <div
+                style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'stretch',
+                    flexWrap: 'wrap',
+                    marginBottom: 32,
+                    maxWidth: '600px',
+                    justifySelf: 'center',
+                    alignSelf: 'center',
+                    flexGrow: '1',
+                }}
+            >
+                <div 
+                    style={{ 
+                        display: 'flex',
+                        flexDirection: 'column',
+                        minWidth: 120, 
+                        background: '#f5f7fa',
+                        padding: '24px 24px',
+                        textAlign: 'center',
+                        boxShadow: '0 2px 12px rgba(5, 5, 5, 0.06)',
+                        borderRadius: 12,
+                        border: '1px solid #e0e0e0',
+                        aspectRatio: '1',
+                        gap: 27,
+                    }}
+                >
+                    <div style={{ fontSize: 14, color: '#888' }}>Total Weight</div>
+                    <div style={{ fontSize: 28, fontWeight: 600 }}>{weight}t</div>
                 </div>
-                <div style={{ fontSize: 13, color: '#888', marginTop: 4 }}>
-                    <span>☀ 0%: {load.grade_0_dry}t</span>
-                    {' | '}
-                    <span>⛆ 2%: {load.grade_2_wet}t</span>
+                <div 
+                    style={{ 
+                        display: 'flex',
+                        flexDirection: 'column',
+                        minWidth: 120, 
+                        background: '#f5f7fa',
+                        padding: '24px 24px',
+                        textAlign: 'center',
+                        boxShadow: '0 2px 12px rgba(5, 5, 5, 0.06)',
+                        borderRadius: 12,
+                        border: '1px solid #e0e0e0',
+                        aspectRatio: '1',
+                        gap: 27,
+                    }}
+                >
+                    <div style={{ fontSize: 14, color: '#888' }}>Total Length</div>
+                    <div style={{ fontSize: 28, fontWeight: 600 }}>{length}m</div>
+                </div>
+                <div 
+                    style={{ 
+                        display: 'flex',
+                        flexDirection: 'column',
+                        minWidth: 120, 
+                        background: '#f5f7fa',
+                        padding: '24px 24px',
+                        textAlign: 'center',
+                        boxShadow: '0 2px 12px rgba(5, 5, 5, 0.06)',
+                        borderRadius: 12,
+                        border: '1px solid #e0e0e0',
+                        aspectRatio: '1',
+                    }}
+                >
+                    <div style={{ fontSize: 14, color: '#888' }}>Load Rating</div>
+                    <div style={{ fontSize: 32, fontWeight: 700, color }}>
+                        {load.grade_2_dry}t
+                        <br />
+                        <div style={{ fontSize: 13, color: '#888' }}>
+                            <span>☀ 2%</span>
+                        </div>
+                    </div>
+                    <div style={{ fontSize: 13, color: '#888', marginTop: 4 }}>
+                        <div style={({ float: 'left', width: '50%' })}>
+                            {load.grade_0_dry}t
+                            <br />
+                            ☀ 0%
+                        </div>
+                        <div style={({ float: 'right', width: '50%' })}>
+                            {load.grade_2_wet}t
+                            <br />
+                            ⛆ 2%
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
