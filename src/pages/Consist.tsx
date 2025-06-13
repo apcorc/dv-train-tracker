@@ -6,6 +6,20 @@ import ItemRow from '../components/ItemRow';
 import ConsistLocomotive from '../components/ConsistLocomotive';
 import Job from '../components/Job';
 import { Link } from 'react-router-dom';
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 // Type guards
 function isStaticItem(item: AnyConsistItem): item is StaticConsistItem {
@@ -76,10 +90,31 @@ export function getBonusTimeRemaining(item: JobItem): number {
   return Math.max(0, item.bonus_time_limit - (item.bonus_time_elapsed || 0));
 }
 
+// Helper for sortable item
+function SortableItem({ id, children }: { id: string, children: React.ReactNode }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
+  return (
+    <div
+      ref={setNodeRef}
+      style={{
+        transform: CSS.Transform.toString(transform),
+        transition,
+        opacity: isDragging ? 0.7 : 1,
+        marginBottom: 8,
+        cursor: 'grab',
+        userSelect: 'none',
+      }}
+      {...attributes}
+      {...listeners}
+    >
+      {children}
+    </div>
+  );
+}
+
 const Consist: React.FC = () => {
   const [items, setItems] = useState<AnyConsistItem[]>([]);
   const [, setTick] = useState(0);
-  const [draggedIdx, setDraggedIdx] = useState<number | null>(null);
 
   useEffect(() => {
     const stored = localStorage.getItem('consistItems');
@@ -97,14 +132,6 @@ const Consist: React.FC = () => {
 
   const removeItem = (index: number) => {
     const updated = items.filter((_, idx) => idx !== index);
-    persist(updated);
-  };
-
-  const moveItem = (from: number, to: number) => {
-    if (to < 0 || to >= items.length) return;
-    const updated = [...items];
-    const [moved] = updated.splice(from, 1);
-    updated.splice(to, 0, moved);
     persist(updated);
   };
 
@@ -188,6 +215,10 @@ const Consist: React.FC = () => {
   const allNotStarted = jobs.every(j => j.status === JobStatus.NotStarted);
   const anyPausedJobs = jobs.some(j => j.status === JobStatus.Paused);
 
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
+  );
+
   return (
     <div style={{ maxWidth: 800, margin: '0 auto', padding: '24px 8px' }}>
       <Dashboard
@@ -198,90 +229,71 @@ const Consist: React.FC = () => {
       <div style={{ display: 'flex', justifyContent: 'center', gap: 12, marginBottom: 24, flexWrap: 'wrap' }}>
         {
             (noJobs || allNotStarted) && (
-                <Link to="#" style={{ minWidth: 120, textAlign: 'center', lineHeight: '32px', background: '#eee', color: '#ccc', borderRadius: 6, padding: '0 12px', textDecoration: 'none', cursor: 'default' }}>Jobs Not Started</Link>
+                <Link to="#" className='card' style={{ minWidth: 120, textAlign: 'center', lineHeight: '32px', borderRadius: 6, padding: '0 12px', textDecoration: 'none', cursor: 'default' }}>Jobs Not Started</Link>
             )
         }
         {
             anyPausedJobs && (
-                <Link to="#" onClick={resumeAll} style={{ minWidth: 120, textAlign: 'center', lineHeight: '32px', background: '#eaf1fb', borderRadius: 6, padding: '0 12px', textDecoration: 'none' }}>Resume All Jobs</Link>
+                <Link to="#" onClick={resumeAll} className='card' style={{ minWidth: 120, textAlign: 'center', lineHeight: '32px', borderRadius: 6, padding: '0 12px', textDecoration: 'none' }}>Resume All Jobs</Link>
             )
         }
         {
             anyActiveJobs && (
-                <Link to="#" onClick={pauseAll} style={{ minWidth: 120, textAlign: 'center', lineHeight: '32px', background: '#eaf1fb', borderRadius: 6, padding: '0 12px', textDecoration: 'none' }}>Pause All Jobs</Link>
+                <Link to="#" onClick={pauseAll} className='card' style={{ minWidth: 120, textAlign: 'center', lineHeight: '32px', borderRadius: 6, padding: '0 12px', textDecoration: 'none' }}>Pause All Jobs</Link>
             )
         }
         
-        <Link to="/locomotives" style={{ minWidth: 120, textAlign: 'center', lineHeight: '32px', background: '#eaf1fb', borderRadius: 6, padding: '0 12px', textDecoration: 'none' }}>Add Locomotive</Link>
-        <Link to="/newjob" style={{ minWidth: 120, textAlign: 'center', lineHeight: '32px', background: '#eaf1fb', borderRadius: 6, padding: '0 12px', textDecoration: 'none' }}>Add Job</Link>
+        <Link to="/locomotives" style={{ minWidth: 120, textAlign: 'center', lineHeight: '32px',  borderRadius: 6, padding: '0 12px', textDecoration: 'none' }} className='card'>Add Locomotive</Link>
+        <Link to="/newjob" style={{ minWidth: 120, textAlign: 'center', lineHeight: '32px', borderRadius: 6, padding: '0 12px', textDecoration: 'none' }} className='card'>Add Job</Link>
       </div>
       <div>
-        {items.length === 0 && (
-          <div style={{ textAlign: 'center', color: '#888', marginTop: 40 }}>No items in consist.</div>
-        )}
-        {items.map((item, idx) => (
-          <div
-            key={idx}
-            draggable
-            onDragStart={() => setDraggedIdx(idx)}
-            onDragOver={e => {
-              e.preventDefault();
-              if (draggedIdx === null || draggedIdx === idx) return;
-              const updated = [...items];
-              const [dragged] = updated.splice(draggedIdx, 1);
-              updated.splice(idx, 0, dragged);
-              setDraggedIdx(idx);
-              setItems(updated);
-            }}
-            onDragEnd={() => {
-              setDraggedIdx(null);
-              persist(items);
-            }}
-            style={{
-              opacity: draggedIdx === idx ? 0.7 : 1,
-              userSelect: 'none',
-              marginBottom: 8,
-              cursor: 'move',
-            }}
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={({ active, over }) => {
+            if (active.id !== over?.id) {
+              const oldIndex = items.findIndex((_, idx) => String(idx) === active.id);
+              const newIndex = items.findIndex((_, idx) => String(idx) === over?.id);
+              const updated = arrayMove(items, oldIndex, newIndex);
+              persist(updated);
+            }
+          }}
+        >
+          <SortableContext
+            items={items.map((_, idx) => String(idx))}
+            strategy={verticalListSortingStrategy}
           >
-            <ItemRow
-              left={
-                isStaticItem(item) ? (
-                  <ConsistLocomotive
-                    item={item}
-                    onStart={() => startLocomotive(idx)}
-                    onStop={() => stopLocomotive(idx)}
-                  />
-                ) : isJob(item) ? (
-                  <Job
-                    item={item}
-                    onStart={() => startJob(idx)}
-                    onPause={() => pauseJob(idx)}
-                  />
-                ) : null
-              }
-              right={
-                <div style={{ display: 'flex', gap: 6 }}>
-                  <button
-                    onClick={() => moveItem(idx, idx - 1)}
-                    disabled={idx === 0}
-                    title="Move Up"
-                  >
-                    ↑
-                  </button>
-                  <button
-                    onClick={() => moveItem(idx, idx + 1)}
-                    disabled={idx === items.length - 1}
-                    title="Move Down"
-                  >
-                    ↓
-                  </button>
-                  <button onClick={() => removeItem(idx)}>Remove</button>
-                </div>
-              }
-            />
-          </div>
-        ))}
+            {items.length === 0 && (
+              <div style={{ textAlign: 'center', color: '#888', marginTop: 40 }}>No items in consist.</div>
+            )}
+            {items.map((item, idx) => (
+              <SortableItem key={idx} id={String(idx)}>
+                <ItemRow
+                  left={
+                    isStaticItem(item) ? (
+                      <ConsistLocomotive
+                        item={item}
+                        onStart={() => startLocomotive(idx)}
+                        onStop={() => stopLocomotive(idx)}
+                      />
+                    ) : isJob(item) ? (
+                      <Job
+                        item={item}
+                        onStart={() => startJob(idx)}
+                        onPause={() => pauseJob(idx)}
+                      />
+                    ) : null
+                  }
+                  right={
+                    <div style={{ display: 'flex', gap: 6, marginRight: 20 }}>
+                      <button onClick={() => removeItem(idx)}>Remove</button>
+                    </div>
+                  }
+                />
+              </SortableItem>
+            ))}
+          </SortableContext>
+        </DndContext>
       </div>
     </div>
   );

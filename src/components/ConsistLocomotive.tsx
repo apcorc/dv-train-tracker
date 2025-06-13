@@ -25,7 +25,12 @@ const ConsistLocomotive: React.FC<{
             <div>
                 <strong>Locomotive:</strong> {loco.display_name}
                 {loco.nickname && ` (${loco.nickname})`}
-                {' '}<span style={{ color: '#888' }}>(Weight: {loco.weight}, Length: {loco.length})</span>
+                <br />
+                <span style={{ color: '#888' }}>
+                    Weight: {loco.weight}m
+                    <br />
+                    Length: {loco.length}t
+                </span>
                 {item.can_run && (
                     <>
                         <br />

@@ -108,9 +108,21 @@ const Job: React.FC<{
                         </span>
                     )}
                     {(item.weight > 0 || item.length > 0) && <br />}
-                    {(item.start_location || item.end_location) && (
+                    {(item.start_location && item.end_location) && (
                         <span style={{ fontSize: 13 }}>
                             From <b>{locationName(item.start_location)}</b> to <b>{locationName(item.end_location)}</b>
+                            <br />
+                        </span>
+                    )}
+                    {(item.start_location && !item.end_location) && (
+                        <span style={{ fontSize: 13 }}>
+                            From <b>{locationName(item.start_location)}</b>
+                            <br />
+                        </span>
+                    )}
+                    {(!item.start_location && item.end_location) && (
+                        <span style={{ fontSize: 13 }}>
+                            To <b>{locationName(item.end_location)}</b>
                             <br />
                         </span>
                     )}

@@ -4,9 +4,25 @@ import { stations } from '../types/Station';
 import { AutocompleteInput } from '../components//AutocompleteInput';
 import { Link } from 'react-router-dom';
 
+function updateJobId(currentId: string, newLocCode: string, newTypeCode: string): string {
+  // Match format: CODE-TYPECODE-NUMBER (e.g., SM-B-1, ABC-FH-12)
+  const match = currentId.match(/^([A-Za-z0-9]+)-([A-Za-z]+)-(\d+)$/);
+  if (match) {
+    const [, , , number] = match;
+    const locCode = newLocCode ? newLocCode : 'XX';
+    return `${locCode}-${newTypeCode}-${number}`;
+  }
+  return currentId;
+}
+
+function locationCode(location: string): string {
+    const [station_code, , ] = location.split('-');
+    return station_code ?? location;
+}
+
 const NewJob: React.FC = () => {
   const [form, setForm] = useState<JobItem>({
-    id: '',
+    id: 'XX-FH-00',
     weight: 0,
     length: 0,
     start_location: '',
@@ -16,6 +32,15 @@ const NewJob: React.FC = () => {
     status: JobStatus.NotStarted,
     type: JobType.Freight,
   });
+
+  function jobTypeCode(type: JobType): string {
+    switch (type) {
+      case JobType.Freight: return 'FH';
+      case JobType.Shunting: return 'SH';
+      case JobType.Logistics: return 'LH';
+      default: return '';
+    }
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -31,18 +56,35 @@ const NewJob: React.FC = () => {
   };
 
   const handleLocationChange = (field: 'start_location' | 'end_location', value: string) => {
-    setForm(prev => ({
-      ...prev,
-      [field]: value,
-    }));
+    setForm(prev => {
+      let newId = prev.id;
+      if (field === 'start_location') {
+        // Try to get station code from value (assuming value is code or can map to code)
+        const code = locationCode(value);
+        const typeCode = jobTypeCode(prev.type);
+        newId = updateJobId(prev.id, code, typeCode);
+      }
+      return {
+        ...prev,
+        [field]: value,
+        id: newId,
+      };
+    });
   };
 
   const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { value } = e.target;
-    setForm(prev => ({
-      ...prev,
-      type: value as JobType,
-    }));
+    setForm(prev => {
+      const typeCode = jobTypeCode(value as JobType);
+      // Try to get station code from start_location
+      const code = locationCode(prev.start_location);
+      const newId = updateJobId(prev.id, code, typeCode);
+      return {
+        ...prev,
+        type: value as JobType,
+        id: newId,
+      };
+    });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -80,48 +122,22 @@ const NewJob: React.FC = () => {
       <form
         onSubmit={handleSubmit}
         style={{
-          background: '#fff',
           borderRadius: 12,
-          boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
           padding: 24,
           display: 'flex',
           flexDirection: 'column',
           gap: 18,
         }}
+        className='card'
       >
-        <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+        <div>
           <label style={{ flex: 1, minWidth: 160 }}>
             Job Type:
-            <select name="type" value={form.type} onChange={handleTypeChange} style={{ width: '100%' }}>
+            <select name="type" value={form.type} onChange={handleTypeChange} style={{ width: '100%' }} className='input'>
                 {Object.values(JobType).map((type) => (
                     <option value={type}>{jobTypeString(type)}</option>
                 ))}
             </select>
-          </label>
-          <label style={{ flex: 1, minWidth: 160 }}>
-            ID:
-            <input name="id" value={form.id} onChange={handleChange} style={{ width: '100%' }} />
-          </label>
-        </div>
-        <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
-          <label style={{ flex: 1, minWidth: 120 }}>
-            Weight:
-            <input name="weight" type="number" value={form.weight} onChange={handleChange} style={{ width: '100%' }} />
-          </label>
-          <label style={{ flex: 1, minWidth: 120 }}>
-            Length:
-            <input name="length" type="number" value={form.length} onChange={handleChange} style={{ width: '100%' }} />
-          </label>
-          <label style={{ flex: 1, minWidth: 160 }}>
-            Time Bonus:
-            <input
-              name="bonus_time_limit"
-              type="number"
-              min={0}
-              value={form.bonus_time_limit ? Math.round(form.bonus_time_limit / 60) : ''}
-              onChange={handleChange}
-              style={{ width: '100%' }}
-            />
           </label>
         </div>
         <div>
@@ -146,8 +162,36 @@ const NewJob: React.FC = () => {
             />
           </label>
         </div>
+        <div>
+          <label style={{ flex: 1, minWidth: 160 }}>
+            ID:
+            <input name="id" value={form.id} onChange={handleChange} style={{ width: '100%' }} className='input' />
+          </label>
+        </div>
+        <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+          <label style={{ flex: 1, minWidth: 120 }}>
+            Weight:
+            <input name="weight" type="number" value={form.weight} onChange={handleChange} style={{ width: '100%' }} className='input' />
+          </label>
+          <label style={{ flex: 1, minWidth: 120 }}>
+            Length:
+            <input name="length" type="number" value={form.length} onChange={handleChange} style={{ width: '100%' }} className='input' />
+          </label>
+          <label style={{ flex: 1, minWidth: 160 }}>
+            Time Bonus:
+            <input
+              name="bonus_time_limit"
+              type="number"
+              min={0}
+              value={form.bonus_time_limit ? Math.round(form.bonus_time_limit / 60) : ''}
+              onChange={handleChange}
+              style={{ width: '100%' }} 
+              className='input'
+            />
+          </label>
+        </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 16 }}>
-          <button type="submit" style={{ minWidth: 120 }}>
+          <button type="submit" style={{ minWidth: 120 }} className='input'>
             Add Job
           </button>
         </div>

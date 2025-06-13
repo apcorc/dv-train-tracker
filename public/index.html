@@ -4,6 +4,64 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Derail Valley Train Tracker</title>
+    <style>
+        :root {
+        --background: #fff;
+        --foreground: #222;
+        --card-bg: #fff;
+        --card-border: #eee;
+        --card-hover-border: #e0e0e0;
+        --card-hover-bg: #f5f7fa;
+        }
+        @media (prefers-color-scheme: dark) {
+        :root {
+            --background: #181a1b;
+            --foreground: #f3f3f3;
+            --card-bg: #232527;
+            --card-border: #333;
+            --card-hover-border: #337ab7;
+            --card-hover-bg: #232e3a;
+        }
+        }
+        body {
+        background: var(--background);
+        color: var(--foreground);
+        transition: background 0.2s, color 0.2s;
+        }
+        .card {
+        background: var(--card-bg);
+        box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        border: 1px solid var(--card-border);
+        color: var(--foreground);
+        }
+        .input {
+        background: var(--card-bg);
+        box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        border: 1px solid var(--card-border);
+        color: var(--foreground);
+        padding: 8px;
+        }
+        .locomotive-card{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        border-radius: 12px;
+        padding: 16px;
+        min-height: 160px;
+        min-width: 0;
+        cursor: pointer;
+        transition: box-shadow 0.15s, border 0.15s, background 0.15s;
+        outline: none;
+        user-select: none;
+        }
+        .locomotive-card:hover,
+        .locomotive-card:focus {
+        box-shadow: 0 4px 16px rgba(51,122,183,0.15);
+        border: 1px solid var(--card-hover-border);
+        background: var(--card-hover-bg);
+        }
+    </style>
 </head>
 <body>
     <div id="root"></div>

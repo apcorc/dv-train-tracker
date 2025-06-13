@@ -125,14 +125,14 @@ export const AutocompleteInput: React.FC<{
                 onFocus={() => setIsOpen(true)}
                 onBlur={() => setTimeout(() => setIsOpen(false), 150)}
                 style={{ width: '100%' }}
-                autoComplete="off" />
+                autoComplete="off" 
+                className='input' />
             {isOpen && inputValue.trim() && (
                 <div
                     ref={dropdownRef}
                     style={{
                         position: 'absolute',
                         zIndex: 10,
-                        background: '#fff',
                         border: '1px solid #ccc',
                         borderRadius: 4,
                         width: '100%',
@@ -140,6 +140,7 @@ export const AutocompleteInput: React.FC<{
                         overflowY: 'auto',
                         boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
                     }}
+                    className='card'
                 >
                     {matches.length === 0 ? (
                         <div style={{ padding: 8, color: '#888' }}>
@@ -152,7 +153,7 @@ export const AutocompleteInput: React.FC<{
                                 style={{
                                     padding: 8,
                                     cursor: 'pointer',
-                                    background: selectedIndex === index ? '#eaf1fb' : undefined,
+                                    background: selectedIndex === index ? 'var(--card-hover-bg)' : undefined,
                                 }}
                                 onMouseDown={() => selectOption(option)}
                                 onMouseEnter={() => setSelectedIndex(index)}
