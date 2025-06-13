@@ -92,7 +92,14 @@ export function getBonusTimeRemaining(item: JobItem): number {
 
 // Helper for sortable item
 function SortableItem({ id, children }: { id: string, children: React.ReactNode }) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id,
+    animateLayoutChanges: (args) => {
+      // Only animate the dragged item
+      if (args.isDragging) return true;
+      return false;
+    },
+  });
   return (
     <div
       ref={setNodeRef}
