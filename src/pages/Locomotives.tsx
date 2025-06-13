@@ -48,9 +48,9 @@ const Locomotives: React.FC = () => {
       <h1 style={{ textAlign: 'center', marginBottom: 16 }}>Add Locomotive</h1>
       <Link to="/" style={{ color: '#337ab7', textDecoration: 'none', marginBottom: 24, display: 'inline-block' }}>Back to Consist</Link>
       <div
+        className="locomotive-grid"
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
           gap: 24,
           justifyItems: 'stretch',
           alignItems: 'stretch',
@@ -60,6 +60,18 @@ const Locomotives: React.FC = () => {
           <LocomotiveComponent key={item.id || idx} item={item} onClick={() => addToConsist(item)} />
         ))}
       </div>
+      <style>
+        {`
+          .locomotive-grid {
+            grid-template-columns: repeat(4, 1fr);
+          }
+          @media (max-width: 700px) {
+            .locomotive-grid {
+              grid-template-columns: repeat(2, 1fr);
+            }
+          }
+        `}
+      </style>
     </div>
   );
 };
