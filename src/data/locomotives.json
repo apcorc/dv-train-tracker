@@ -5,9 +5,9 @@
     "weight": 38, 
     "length": 7.6,
     "load_rating": {
-        "grade_0_dry": 1200,
-        "grade_2_dry": 300,
-        "grade_2_wet": 250
+      "grade_0_dry": 1200,
+      "grade_2_dry": 300,
+      "grade_2_wet": 250
     }
   },
   { 
@@ -16,9 +16,9 @@
     "weight": 50.7, 
     "length": 9.32,
     "load_rating": {
-        "grade_0_dry": 1500,
-        "grade_2_dry": 400,
-        "grade_2_wet": 300
+      "grade_0_dry": 1500,
+      "grade_2_dry": 400,
+      "grade_2_wet": 300
     }
   },
   { 
@@ -27,9 +27,9 @@
     "weight": 52, 
     "length": 8.6,
     "load_rating": {
-        "grade_0_dry": 2000,
-        "grade_2_dry": 500,
-        "grade_2_wet": 400
+      "grade_0_dry": 2000,
+      "grade_2_dry": 500,
+      "grade_2_wet": 400
     }
   },
   { 
@@ -38,9 +38,9 @@
     "weight": 77.5, 
     "length": 12.94,
     "load_rating": {
-        "grade_0_dry": 2000,
-        "grade_2_dry": 600,
-        "grade_2_wet": 500
+      "grade_0_dry": 2000,
+      "grade_2_dry": 600,
+      "grade_2_wet": 500
     }
   },
   { 
@@ -49,9 +49,9 @@
     "weight": 77.5, 
     "length": 12.94,
     "load_rating": {
-        "grade_0_dry": 3000,
-        "grade_2_dry": 1000,
-        "grade_2_wet": 800
+      "grade_0_dry": 3000,
+      "grade_2_dry": 1000,
+      "grade_2_wet": 800
     }
   },
   { 
@@ -67,9 +67,9 @@
     "weight": 125, 
     "length": 18.64,
     "load_rating": {
-        "grade_0_dry": 3000,
-        "grade_2_dry": 1200,
-        "grade_2_wet": 1000
+      "grade_0_dry": 3000,
+      "grade_2_dry": 1200,
+      "grade_2_wet": 1000
     }
   },
   { 
@@ -86,9 +86,9 @@
     "weight": 12, 
     "length": 4.80,
     "load_rating": {
-        "grade_0_dry": 800,
-        "grade_2_dry": 100,
-        "grade_2_wet": 50
+      "grade_0_dry": 800,
+      "grade_2_dry": 100,
+      "grade_2_wet": 50
     }
   },
   { 
@@ -104,6 +104,13 @@
     "nickname": "URV", 
     "weight": 10.4,
     "length": 14.47,
+    "load_rating": null
+  },
+  { 
+    "id": "USFC", 
+    "display_name": "Utility Short Flatcar", 
+    "weight": 3.65,
+    "length": 9.1,
     "load_rating": null
   }
 ]
