@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.js": "/dv-train-tracker/static/js/main.76ae047c.chunk.js",
-    "main.js.map": "/dv-train-tracker/static/js/main.76ae047c.chunk.js.map",
+    "main.js": "/dv-train-tracker/static/js/main.fc5a507b.chunk.js",
+    "main.js.map": "/dv-train-tracker/static/js/main.fc5a507b.chunk.js.map",
     "runtime-main.js": "/dv-train-tracker/static/js/runtime-main.e49c6d85.js",
     "runtime-main.js.map": "/dv-train-tracker/static/js/runtime-main.e49c6d85.js.map",
     "static/js/2.57100352.chunk.js": "/dv-train-tracker/static/js/2.57100352.chunk.js",
@@ -12,6 +12,6 @@
   "entrypoints": [
     "static/js/runtime-main.e49c6d85.js",
     "static/js/2.57100352.chunk.js",
-    "static/js/main.76ae047c.chunk.js"
+    "static/js/main.fc5a507b.chunk.js"
   ]
 }
