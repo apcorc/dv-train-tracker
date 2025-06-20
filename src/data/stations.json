@@ -187,8 +187,8 @@
         "id": "B",
         "name": "B Transfer Yard",
         "tracks": [
-          { "number": 1, "type": ["storage"], "display_name": "B1I" },
-          { "number": 2, "type": ["input"], "display_name": "B2S" },
+          { "number": 1, "type": ["storage"], "display_name": "B1S" },
+          { "number": 2, "type": ["input"], "display_name": "B2I" },
           { "number": 3, "type": ["storage"], "display_name": "B3S" },
           { "number": 5, "type": ["output"], "display_name": "B5O" },
           { "number": 6, "type": ["output"], "display_name": "B6O" }
