@@ -279,15 +279,15 @@
     "code": "FRS",
     "yards": [
       {
-        "id": "A",
-        "name": "A",
+        "id": "B",
+        "name": "B",
         "tracks": [
-          { "number": 1, "type": [ "loading" ], "display_name": "A1L" },
-          { "number": 2, "type": [ "input" ], "display_name": "A2I" },
-          { "number": 3, "type": [ "output" ], "display_name": "A3O" },
-          { "number": 5, "type": [ "output" ], "display_name": "A5O" },
-          { "number": 6, "type": [ "storage" ], "display_name": "A6S" },
-          { "number": 7, "type": [ "storage" ], "display_name": "A7S" }
+          { "number": 1, "type": [ "loading" ], "display_name": "B1L" },
+          { "number": 2, "type": [ "input" ], "display_name": "B2I" },
+          { "number": 3, "type": [ "output" ], "display_name": "B3O" },
+          { "number": 5, "type": [ "output" ], "display_name": "B5O" },
+          { "number": 6, "type": [ "storage" ], "display_name": "B6S" },
+          { "number": 7, "type": [ "storage" ], "display_name": "B7S" }
         ]
       }
     ],
