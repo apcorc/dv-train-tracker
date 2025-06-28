@@ -292,9 +292,22 @@ const Consist: React.FC = () => {
                     ) : null
                   }
                   right={
-                    <div style={{ display: 'flex', gap: 6, marginRight: 20 }}>
-                      <button onClick={() => removeItem(idx)}>Remove</button>
-                    </div>
+                    <button
+                      onClick={() => removeItem(idx)}
+                      className="remove-btn"
+                      aria-label="Remove"
+                      tabIndex={0}
+                      type="button"
+                    >
+                      <span style={{
+                        color: '#fff',
+                        fontWeight: 700,
+                        fontSize: 28,
+                        lineHeight: 1,
+                        pointerEvents: 'none',
+                        userSelect: 'none',
+                      }}>×</span>
+                    </button>
                   }
                 />
               </SortableItem>

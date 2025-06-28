@@ -1,5 +1,5 @@
 import React from 'react';
-import { JobItem, JobStatus, JobType } from '../types/ConsistItem';
+import { JobItem, JobLocation, JobStatus, JobType } from '../types/ConsistItem';
 import { getBonusTimeRemaining } from '../pages/Consist';
 import { stations } from '../types/Station';
 
@@ -26,20 +26,13 @@ function formatTime(seconds: number): string {
   return `${mm}:${ss}`;
 }
 
-function locationName(location: string): string {
-    const [station_code, yard_id, track_number] = location.split('-');
-
-    if (!station_code || !yard_id || !track_number) {
-        return location;
-    }
-
-    // Assuming you have a function or mapping to get station names by code
-    const station = stations.find(s => s.code === station_code);
-    const yard = station?.yards.find(y => y.id === yard_id);
-    const track = yard?.tracks.find(t => t.number.toString() === track_number);
+function locationName(location: JobLocation): string {
+    const station = stations.find(s => s.code === location.station_code);
+    const yard = station?.yards.find(y => y.id === location.yard_id);
+    const track = yard?.tracks.find(t => t.number === location.track_number);
     
     if (!station || !yard || !track) {
-        return location;
+        return location.station_code + '-' + location.yard_id + '-' + location.track_number;
     }
 
     return station.name + ' ' + track.display_name;
@@ -69,8 +62,8 @@ const Job: React.FC<{
         <div style={{
             display: 'flex',
             alignItems: 'stretch',
-            flexWrap: 'wrap',
             gap: 8,
+            minHeight: 56,
         }}>
             {/* Colored stripe */}
             <div
@@ -89,12 +82,11 @@ const Job: React.FC<{
             <div style={{
                 flex: 1,
                 display: 'flex',
-                justifyContent: 'space-between',
                 alignItems: 'center',
-                flexWrap: 'wrap',
                 gap: 8,
+                minWidth: 0,
             }}>
-                <div>
+                <div style={{ flex: 1, minWidth: 0 }}>
                     <span>{item.id}</span>
                     <br />
                     {(item.weight > 0) && (
@@ -108,39 +100,84 @@ const Job: React.FC<{
                         </span>
                     )}
                     {(item.weight > 0 || item.length > 0) && <br />}
-                    {(item.start_location && item.end_location) && (
-                        <span style={{ fontSize: 13 }}>
-                            From <b>{locationName(item.start_location)}</b> to <b>{locationName(item.end_location)}</b>
-                            <br />
+                    {item.start_location && (
+                      <>
+                        <span style={
+                            item.status === JobStatus.NotStarted ? {
+                                fontSize: 15,
+                            } : {
+                                fontSize: 13,
+                                color: '#888',
+                            }
+                        }>
+                            Pickup from {locationName(item.start_location)}
                         </span>
+                        <br />
+                      </>
                     )}
-                    {(item.start_location && !item.end_location) && (
-                        <span style={{ fontSize: 13 }}>
-                            From <b>{locationName(item.start_location)}</b>
-                            <br />
+                    {item.end_location && (
+                      <>
+                        <span style={
+                            item.status !== JobStatus.NotStarted ? {
+                                fontSize: 15,
+                            } : {
+                                fontSize: 13,
+                                color: '#888',
+                            }
+                        }>
+                            Deliver to {locationName(item.end_location)}
                         </span>
-                    )}
-                    {(!item.start_location && item.end_location) && (
-                        <span style={{ fontSize: 13 }}>
-                            To <b>{locationName(item.end_location)}</b>
-                            <br />
-                        </span>
-                    )}
-                    {item.bonus_time_limit > 0 && (
-                        <span style={{ fontSize: 13 }}>
-                            Bonus Time Limit: {Math.round(item.bonus_time_limit / 60)} min |{' '}
-                            <strong>Remaining: {formatTime(remaining)}</strong>
-                            <br />
-                        </span>
+                        <br />
+                      </>
                     )}
                     <span style={{ fontSize: 13, color: '#888' }}>Status: {statusText(item.status)}</span>
                 </div>
-                <div style={{ display: 'flex', gap: 8 }}>
-                    {item.status === JobStatus.NotStarted || item.status === JobStatus.Paused ? (
-                        <button onClick={onStart}>Start</button>
-                    ) : (
-                        <button onClick={onPause}>Pause</button>
+                {/* Bonus Time */}
+                <div style={{
+                    width: 100,
+                    textAlign: 'center',
+                    minHeight: 38,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginLeft: 8,
+                }}>
+                    {item.bonus_time_limit > 0 && (
+                        <>
+                            <span>Bonus Time:</span>
+                            <span>{formatTime(remaining)}</span>
+                        </>
                     )}
+                </div>
+                {/* Start/Pause Button */}
+                <div style={{
+                    width: 50,
+                    minWidth: 50,
+                    maxWidth: 50,
+                    height: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginLeft: 8,
+                }}>
+                    <button
+                        onClick={item.status === JobStatus.NotStarted || item.status === JobStatus.Paused ? onStart : onPause}
+                        className="job-power-btn"
+                        aria-label={item.status === JobStatus.NotStarted || item.status === JobStatus.Paused ? "Start Job" : "Pause Job"}
+                        type="button"
+                        tabIndex={0}
+                    >
+                        <span style={{
+                            color: '#fff',
+                            fontSize: 28,
+                            lineHeight: 1,
+                            pointerEvents: 'none',
+                            userSelect: 'none',
+                        }}>
+                            {(item.status === JobStatus.NotStarted || item.status === JobStatus.Paused) ? '▶' : '⏸'}
+                        </span>
+                    </button>
                 </div>
             </div>
         </div>

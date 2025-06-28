@@ -8,16 +8,19 @@ const ItemRow: React.FC<{
         style={{
             display: 'flex',
             justifyContent: 'space-between',
-            alignItems: 'center',
+            alignItems: 'stretch',
             borderRadius: 8,
             marginBottom: 16,
             flexWrap: 'wrap',
-            gap: 16,
+            gap: 0,
+            userSelect: 'none',
+            overflow: 'hidden', // Ensures button is clipped by border radius
+            minHeight: 56,
         }}
         className='card'
     >
         <div style={{ flex: 1, minWidth: 200 }}>{left}</div>
-        <div style={{ display: 'flex', gap: 8 }}>{right}</div>
+        <div>{right}</div>
     </div>
 );
 

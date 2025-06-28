@@ -1,9 +1,10 @@
 import React, { useState, useRef, useMemo, useEffect } from 'react';
 import { Station } from '../types/Station';
+import { JobLocation } from '../types/ConsistItem';
 
 export interface LocationOption {
   label: string;
-  value: string;
+  value: JobLocation;
   stationName: string;
   stationCode: string;
   trackName: string;
@@ -17,7 +18,11 @@ function getAllLocationOptions(stations: Station[]): LocationOption[] {
       yard.tracks.forEach(track => {
         options.push({
           label: `${station.name} - ${yard.name} - ${track.display_name}`,
-          value: `${station.code}-${yard.id}-${track.number}`,
+          value: {
+            station_code: station.code,
+            yard_id: yard.id,
+            track_number: track.number,
+          },
           stationName: station.name,
           stationCode: station.code,
           trackName: track.display_name,
@@ -30,9 +35,9 @@ function getAllLocationOptions(stations: Station[]): LocationOption[] {
 }
 
 export const AutocompleteInput: React.FC<{
-    value: string;
+    value: JobLocation | undefined;
     stations: Station[],
-    onChange: (value: string) => void;
+    onChange: (value: JobLocation | undefined) => void;
     label: string;
 }> = ({ value, stations, onChange, label }) => {
     const [inputValue, setInputValue] = useState('');
@@ -80,7 +85,7 @@ export const AutocompleteInput: React.FC<{
         setInputValue(e.target.value);
         setIsOpen(true);
         setSelectedIndex(-1);
-        onChange('');
+        onChange(undefined);
     };
 
     const selectOption = (option: LocationOption) => {

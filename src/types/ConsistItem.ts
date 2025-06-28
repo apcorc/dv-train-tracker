@@ -13,13 +13,19 @@ export interface StaticConsistItem extends ConsistItem {
 export interface JobItem extends ConsistItem {
   weight: number;
   length: number;
-  start_location: string;
-  end_location: string;
+  start_location: JobLocation | undefined;
+  end_location: JobLocation | undefined;
   bonus_time_limit: number;
   bonus_time_elapsed: number;
   status: JobStatus;
   end_timestamp?: EpochTimeStamp;
   type: JobType;
+}
+
+export interface JobLocation {
+  station_code: string;
+  yard_id: string;
+  track_number: number;
 }
 
 export enum JobStatus {

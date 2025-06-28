@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { JobItem, JobStatus, JobType } from '../types/ConsistItem';
+import { JobItem, JobLocation, JobStatus, JobType } from '../types/ConsistItem';
 import { stations } from '../types/Station';
 import { AutocompleteInput } from '../components//AutocompleteInput';
 import { Link } from 'react-router-dom';
@@ -15,18 +15,13 @@ function updateJobId(currentId: string, newLocCode: string, newTypeCode: string)
   return currentId;
 }
 
-function locationCode(location: string): string {
-    const [station_code, , ] = location.split('-');
-    return station_code ?? location;
-}
-
 const NewJob: React.FC = () => {
   const [form, setForm] = useState<JobItem>({
     id: 'XX-FH-00',
     weight: 0,
     length: 0,
-    start_location: '',
-    end_location: '',
+    start_location: undefined,
+    end_location: undefined,
     bonus_time_limit: 0,
     bonus_time_elapsed: 0,
     status: JobStatus.NotStarted,
@@ -55,20 +50,27 @@ const NewJob: React.FC = () => {
     }));
   };
 
-  const handleLocationChange = (field: 'start_location' | 'end_location', value: string) => {
+  const handleLocationChange = (field: 'start_location' | 'end_location', value: JobLocation | undefined) => {
     setForm(prev => {
-      let newId = prev.id;
       if (field === 'start_location') {
         // Try to get station code from value (assuming value is code or can map to code)
-        const code = locationCode(value);
-        const typeCode = jobTypeCode(prev.type);
-        newId = updateJobId(prev.id, code, typeCode);
+        let newId = prev.id;
+
+        if (value) {
+          newId = updateJobId(prev.id, value.station_code, jobTypeCode(prev.type));
+        }
+
+        return {
+          ...prev,
+          start_location: value,
+          id: newId,
+        };
+      } else {
+        return {
+          ...prev,
+          [field]: value
+        };
       }
-      return {
-        ...prev,
-        [field]: value,
-        id: newId,
-      };
     });
   };
 
@@ -77,7 +79,7 @@ const NewJob: React.FC = () => {
     setForm(prev => {
       const typeCode = jobTypeCode(value as JobType);
       // Try to get station code from start_location
-      const code = locationCode(prev.start_location);
+      const code = prev.start_location?.station_code ?? '';
       const newId = updateJobId(prev.id, code, typeCode);
       return {
         ...prev,
