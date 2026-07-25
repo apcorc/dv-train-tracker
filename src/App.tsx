@@ -7,13 +7,11 @@ import NewJob from './pages/NewJob';
 const App: React.FC = () => {
   return (
     <Router>
-      <div>
-        <Switch>
-          <Route path="/" exact component={Consist} />
-          <Route path="/locomotives" component={Locomotives} />
-          <Route path="/newjob" component={NewJob} />
-        </Switch>
-      </div>
+      <Switch>
+        <Route path="/" exact component={Consist} />
+        <Route path="/locomotives" component={Locomotives} />
+        <Route path="/newjob" component={NewJob} />
+      </Switch>
     </Router>
   );
 };

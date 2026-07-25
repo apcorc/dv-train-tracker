@@ -12,7 +12,7 @@ function statusText(status: JobStatus): string {
     case JobStatus.Paused:
       return 'Paused';
     default:
-      return 'Unknown'; 
+      return 'Unknown';
   }
 }
 
@@ -27,161 +27,137 @@ function formatTime(seconds: number): string {
 }
 
 function locationName(location: JobLocation): string {
-    const station = stations.find(s => s.code === location.station_code);
-    const yard = station?.yards.find(y => y.id === location.yard_id);
-    const track = yard?.tracks.find(t => t.number === location.track_number);
-    
-    if (!station || !yard || !track) {
-        return location.station_code + '-' + location.yard_id + '-' + location.track_number;
-    }
+  const station = stations.find(s => s.code === location.station_code);
+  const yard = station?.yards.find(y => y.id === location.yard_id);
+  const track = yard?.tracks.find(t => t.number === location.track_number);
 
-    return station.name + ' ' + track.display_name;
+  if (!station || !yard || !track) {
+    return location.station_code + '-' + location.yard_id + '-' + location.track_number;
+  }
+
+  return station.name + ' ' + track.display_name;
 }
 
-function jobTypeColor(type?: JobType): string {
-    switch (type) {
-        case JobType.Freight:
-            return '#27ae60'; // green
-        case JobType.Shunting:
-            return '#c0392b'; // red
-        case JobType.Logistics:
-            return '#f1c40f'; // yellow
-        default:
-            return '#bbb';    // gray
-    }
+function jobTypeMeta(type?: JobType) {
+  switch (type) {
+    case JobType.Freight:
+      return { stripe: 'bg-rail-go', badge: 'bg-rail-go/15 text-rail-go', label: 'Freight' };
+    case JobType.Shunting:
+      return { stripe: 'bg-rail-stop', badge: 'bg-rail-stop/15 text-rail-stop', label: 'Shunting' };
+    case JobType.Logistics:
+      return {
+        stripe: 'bg-rail-signal',
+        badge: 'bg-rail-signal/20 text-amber-800 dark:text-rail-signal',
+        label: 'Logistics',
+      };
+    default:
+      return {
+        stripe: 'bg-slate-300',
+        badge: 'bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300',
+        label: 'Job',
+      };
+  }
+}
+
+function statusTone(status: JobStatus) {
+  switch (status) {
+    case JobStatus.Active:
+      return 'text-rail-go';
+    case JobStatus.Paused:
+      return 'text-rail-caution';
+    default:
+      return 'text-slate-500 dark:text-slate-400';
+  }
 }
 
 const Job: React.FC<{
-    item: JobItem;
-    onStart: () => void;
-    onPause: () => void;
+  item: JobItem;
+  onStart: () => void;
+  onPause: () => void;
 }> = ({ item, onStart, onPause }) => {
-    const remaining = getBonusTimeRemaining(item);
+  const remaining = getBonusTimeRemaining(item);
+  const meta = jobTypeMeta(item.type);
+  const canStart = item.status === JobStatus.NotStarted || item.status === JobStatus.Paused;
 
-    return (
-        <div style={{
-            display: 'flex',
-            alignItems: 'stretch',
-            gap: 8,
-            minHeight: 56,
-        }}>
-            {/* Colored stripe */}
-            <div
-                style={{
-                    width: 6,
-                    borderTopLeftRadius: 8,
-                    borderBottomLeftRadius: 8,
-                    borderTopRightRadius: 0,
-                    borderBottomRightRadius: 0,
-                    background: jobTypeColor(item.type),
-                    marginRight: 6,
-                    minHeight: 56,
-                }}
-            />
-            {/* Main content */}
-            <div style={{
-                flex: 1,
-                display: 'flex',
-                alignItems: 'center',
-                gap: 8,
-                minWidth: 0,
-            }}>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                    <span>{item.id}</span>
-                    <br />
-                    {(item.weight > 0) && (
-                        <span style={{ color: '#888', paddingRight: 8 }}>
-                            Weight: {item.weight}
-                        </span>
-                    )}
-                    {(item.length > 0) && (
-                        <span style={{ color: '#888' }}>
-                            Length: {item.length}
-                        </span>
-                    )}
-                    {(item.weight > 0 || item.length > 0) && <br />}
-                    {item.start_location && (
-                      <>
-                        <span style={
-                            item.status === JobStatus.NotStarted ? {
-                                fontSize: 15,
-                            } : {
-                                fontSize: 13,
-                                color: '#888',
-                            }
-                        }>
-                            Pickup from {locationName(item.start_location)}
-                        </span>
-                        <br />
-                      </>
-                    )}
-                    {item.end_location && (
-                      <>
-                        <span style={
-                            item.status !== JobStatus.NotStarted ? {
-                                fontSize: 15,
-                            } : {
-                                fontSize: 13,
-                                color: '#888',
-                            }
-                        }>
-                            Deliver to {locationName(item.end_location)}
-                        </span>
-                        <br />
-                      </>
-                    )}
-                    <span style={{ fontSize: 13, color: '#888' }}>Status: {statusText(item.status)}</span>
-                </div>
-                {/* Bonus Time */}
-                <div style={{
-                    width: 100,
-                    textAlign: 'center',
-                    minHeight: 38,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    marginLeft: 8,
-                }}>
-                    {item.bonus_time_limit > 0 && (
-                        <>
-                            <span>Bonus Time:</span>
-                            <span>{formatTime(remaining)}</span>
-                        </>
-                    )}
-                </div>
-                {/* Start/Pause Button */}
-                <div style={{
-                    width: 50,
-                    minWidth: 50,
-                    maxWidth: 50,
-                    height: '100%',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    marginLeft: 8,
-                }}>
-                    <button
-                        onClick={item.status === JobStatus.NotStarted || item.status === JobStatus.Paused ? onStart : onPause}
-                        className="job-power-btn"
-                        aria-label={item.status === JobStatus.NotStarted || item.status === JobStatus.Paused ? "Start Job" : "Pause Job"}
-                        type="button"
-                        tabIndex={0}
-                    >
-                        <span style={{
-                            color: '#fff',
-                            fontSize: 28,
-                            lineHeight: 1,
-                            pointerEvents: 'none',
-                            userSelect: 'none',
-                        }}>
-                            {(item.status === JobStatus.NotStarted || item.status === JobStatus.Paused) ? '▶' : '⏸'}
-                        </span>
-                    </button>
-                </div>
-            </div>
+  return (
+    <div className="flex h-full min-h-[64px] w-full flex-1 items-stretch">
+      <div className={`w-1.5 shrink-0 ${meta.stripe}`} />
+
+      <div className="flex min-w-0 flex-1 flex-col justify-center gap-1 px-3 py-3 sm:px-4">
+        <div className="flex flex-wrap items-center gap-2">
+          <span
+            className={`rounded px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] ${meta.badge}`}
+          >
+            {meta.label}
+          </span>
+          <span className="font-mono text-sm font-semibold text-rail-ink dark:text-white">
+            {item.id}
+          </span>
+          <span className={`text-xs font-medium ${statusTone(item.status)}`}>
+            {statusText(item.status)}
+          </span>
         </div>
-    );
+
+        {(item.weight > 0 || item.length > 0) && (
+          <div className="text-xs text-slate-500 dark:text-slate-400">
+            {item.weight > 0 && <span className="mr-2">{item.weight}t</span>}
+            {item.length > 0 && <span>{item.length}m</span>}
+          </div>
+        )}
+
+        {item.start_location && (
+          <div
+            className={
+              item.status === JobStatus.NotStarted
+                ? 'text-sm font-medium text-rail-ink dark:text-slate-100'
+                : 'text-xs text-slate-500 dark:text-slate-400'
+            }
+          >
+            Pickup · {locationName(item.start_location)}
+          </div>
+        )}
+        {item.end_location && (
+          <div
+            className={
+              item.status !== JobStatus.NotStarted
+                ? 'text-sm font-medium text-rail-ink dark:text-slate-100'
+                : 'text-xs text-slate-500 dark:text-slate-400'
+            }
+          >
+            Deliver · {locationName(item.end_location)}
+          </div>
+        )}
+      </div>
+
+      {item.bonus_time_limit > 0 && (
+        <div className="flex w-[5.5rem] shrink-0 flex-col items-center justify-center border-l border-rail-line/70 px-2 dark:border-slate-700">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-slate-400">
+            Bonus
+          </span>
+          <span
+            className={`font-mono text-lg font-semibold tabular-nums ${
+              item.status === JobStatus.Active && remaining < 60
+                ? 'animate-pulse-soft text-rail-stop'
+                : 'text-rail-ink dark:text-white'
+            }`}
+          >
+            {formatTime(remaining)}
+          </span>
+        </div>
+      )}
+
+      <button
+        onClick={canStart ? onStart : onPause}
+        className="action-strip bg-rail-go hover:bg-emerald-600"
+        aria-label={canStart ? 'Start Job' : 'Pause Job'}
+        type="button"
+      >
+        <span className="text-xl leading-none" aria-hidden>
+          {canStart ? '▶' : '⏸'}
+        </span>
+      </button>
+    </div>
+  );
 };
 
 export default Job;

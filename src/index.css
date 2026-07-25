@@ -1,0 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply antialiased;
+  }
+
+  body {
+    @apply min-h-screen bg-rail-grid font-sans text-rail-ink dark:text-slate-100;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    body {
+      background-image:
+        linear-gradient(180deg, #121820 0%, #0d1218 100%),
+        repeating-linear-gradient(
+          90deg,
+          transparent,
+          transparent 47px,
+          rgba(232, 163, 23, 0.04) 47px,
+          rgba(232, 163, 23, 0.04) 49px
+        );
+    }
+  }
+}
+
+@layer components {
+  .panel {
+    @apply rounded-xl border border-rail-line bg-white shadow-panel backdrop-blur-sm dark:border-slate-700 dark:bg-slate-900;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-rail-steel px-4 py-2.5 text-sm font-semibold text-white transition duration-150 ease-out hover:bg-rail-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-rail-amber focus-visible:ring-offset-2 dark:bg-rail-amber dark:text-rail-ink dark:hover:bg-rail-signal dark:focus-visible:ring-offset-slate-900;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-rail-line bg-white px-4 py-2.5 text-sm font-semibold text-rail-steel transition duration-150 ease-out hover:bg-rail-mist focus:outline-none focus-visible:ring-2 focus-visible:ring-rail-amber focus-visible:ring-offset-2 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700 dark:focus-visible:ring-offset-slate-900;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold text-rail-steel transition duration-150 ease-out hover:bg-rail-mist focus:outline-none focus-visible:ring-2 focus-visible:ring-rail-amber focus-visible:ring-offset-2 dark:text-slate-200 dark:hover:bg-slate-800 dark:focus-visible:ring-offset-slate-900;
+  }
+
+  .field {
+    @apply mt-1.5 w-full rounded-lg border border-rail-line bg-white px-3 py-2.5 text-sm text-rail-ink shadow-sm outline-none transition placeholder:text-slate-400 focus:border-rail-amber focus:ring-2 focus:ring-rail-amber dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-rail-signal;
+  }
+
+  .label {
+    @apply block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400;
+  }
+
+  .action-strip {
+    @apply flex h-full w-12 shrink-0 items-center justify-center text-white transition focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white;
+  }
+}
