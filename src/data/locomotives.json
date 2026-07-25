@@ -1,0 +1,116 @@
+[
+  { 
+    "id": "DE2-480", 
+    "display_name": "DE2",
+    "weight": 38, 
+    "length": 7.6,
+    "load_rating": {
+      "grade_0_dry": 1200,
+      "grade_2_dry": 300,
+      "grade_2_wet": 250
+    }
+  },
+  { 
+    "id": "S060-440", 
+    "display_name": "S060", 
+    "weight": 50.7, 
+    "length": 9.32,
+    "load_rating": {
+      "grade_0_dry": 1500,
+      "grade_2_dry": 400,
+      "grade_2_wet": 300
+    }
+  },
+  { 
+    "id": "DM3-540", 
+    "display_name": "DM3", 
+    "weight": 52, 
+    "length": 8.6,
+    "load_rating": {
+      "grade_0_dry": 2000,
+      "grade_2_dry": 500,
+      "grade_2_wet": 400
+    }
+  },
+  { 
+    "id": "DH4-670", 
+    "display_name": "DH4", 
+    "weight": 77.5, 
+    "length": 12.94,
+    "load_rating": {
+      "grade_0_dry": 2000,
+      "grade_2_dry": 600,
+      "grade_2_wet": 500
+    }
+  },
+  { 
+    "id": "S282-730A", 
+    "display_name": "S282", 
+    "weight": 77.5, 
+    "length": 12.94,
+    "load_rating": {
+      "grade_0_dry": 3000,
+      "grade_2_dry": 1000,
+      "grade_2_wet": 800
+    }
+  },
+  { 
+    "id": "S282-730B", 
+    "display_name": "S282 Tender", 
+    "weight": 50, 
+    "length": 8.54,
+    "load_rating": null
+  },
+  { 
+    "id": "DE6-860", 
+    "display_name": "DE6", 
+    "weight": 125, 
+    "length": 18.64,
+    "load_rating": {
+      "grade_0_dry": 3000,
+      "grade_2_dry": 1200,
+      "grade_2_wet": 1000
+    }
+  },
+  { 
+    "id": "DE6-860S", 
+    "display_name": "DE6 Slug", 
+    "weight": 125, 
+    "length": 16.8,
+    "load_rating": null
+  },
+  { 
+    "id": "BE2-260", 
+    "display_name": "BE2",
+    "nickname": "Microshunter", 
+    "weight": 12, 
+    "length": 4.80,
+    "load_rating": {
+      "grade_0_dry": 800,
+      "grade_2_dry": 100,
+      "grade_2_wet": 50
+    }
+  },
+  { 
+    "id": "Support-01", 
+    "display_name": "Caboose",
+    "weight": 22, 
+    "length": 13.2,
+    "load_rating": null
+  },
+  { 
+    "id": "DM1U-150", 
+    "display_name": "Utility Rail Vehicle", 
+    "nickname": "URV", 
+    "weight": 10.4,
+    "length": 14.47,
+    "load_rating": null
+  },
+  { 
+    "id": "USFC", 
+    "display_name": "Utility Short Flatcar", 
+    "weight": 3.65,
+    "length": 9.1,
+    "load_rating": null
+  }
+]

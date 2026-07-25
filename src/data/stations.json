@@ -1,0 +1,703 @@
+[
+  {
+    "name": "Coal Mine East",
+    "code": "CME",
+    "yards": [
+      {
+        "id": "A",
+        "name": "A",
+        "tracks": [
+          { "number": 3, "type": ["loading"], "display_name": "A3L" }
+        ]
+      },
+      {
+        "id": "B",
+        "name": "B Transfer Yard",
+        "tracks": [
+          { "number": 1, "type": ["input"], "display_name": "B1I" },
+          { "number": 2, "type": ["output"], "display_name": "B2O" },
+          { "number": 3, "type": ["output"], "display_name": "B3O" },
+          { "number": 5, "type": ["storage"], "display_name": "B5S" }
+        ]
+      },
+      {
+        "id": "C",
+        "name": "C Transfer Yard",
+        "tracks": [
+          { "number": 1, "type": ["storage"], "display_name": "C1S" },
+          { "number": 3, "type": ["storage"], "display_name": "C3S" }
+        ]
+      }
+    ],
+    "services": [
+      "repair", "diesel-service", "coal-service"
+    ]
+  },
+  {
+    "name": "Coal Mine South",
+    "code": "CMS",
+    "yards": [
+      {
+        "id": "A",
+        "name": "A",
+        "tracks": [
+          { "number": 1, "type": ["storage"], "display_name": "A1S" },
+          { "number": 2, "type": ["loading"], "display_name": "A2L" }
+        ]
+      },
+      {
+        "id": "B",
+        "name": "B Transfer Yard",
+        "tracks": [
+          { "number": 2, "type": ["input"], "display_name": "B2I" },
+          { "number": 3, "type": ["storage"], "display_name": "B3S" },
+          { "number": 4, "type": ["output"], "display_name": "B4O" },
+          { "number": 5, "type": ["storage"], "display_name": "B5S" },
+          { "number": 6, "type": ["output"], "display_name": "B6O" },
+          { "number": 7, "type": ["output"], "display_name": "B7O" },
+          { "number": 8, "type": ["output"], "display_name": "B8O" }
+        ]
+      }
+    ],
+    "services": [
+      "coal-service"
+    ]
+  },
+  {
+    "name": "Coal Power Plant",
+    "code": "CP",
+    "yards": [
+      {
+        "id":"A",
+        "name": "A",
+        "tracks": [
+          { "number": 1, "type": ["storage"], "display_name": "A1S" },
+          { "number": 2, "type": ["input"], "display_name": "A2I" },
+          { "number": 3, "type": ["loading"], "display_name": "A3L" },
+          { "number": 4, "type": ["storage"], "display_name": "A4S" },
+          { "number": 5, "type": ["storage"], "display_name": "A5S" },
+          { "number": 6, "type": ["storage"], "display_name": "A6S" }
+        ]
+      },
+      {
+        "id": "B",
+        "name": "B Transfer Yard",
+        "tracks": [
+          { "number": 1, "type": ["storage"], "display_name": "B1S" },
+          { "number": 2, "type": ["storage"], "display_name": "B2S" },
+          { "number": 3, "type": ["storage"], "display_name": "B3S" },
+          { "number": 5, "type": ["input"], "display_name": "B5I" }
+        ]
+      }
+    ],
+    "services": [
+      "coal-service"
+    ]
+  },
+  {
+    "name": "City South",
+    "code": "CS",
+    "yards": [
+      {
+        "id": "A",
+        "name": "A",
+        "tracks": [
+          { "number": 1, "type": ["loading", "passenger"], "display_name": "A1LP" },
+          { "number": 2, "type": ["loading", "passenger"], "display_name": "A2LP" },
+          { "number": 3, "type": ["loading"], "display_name": "A3L" }
+        ]
+      },
+      {
+        "id": "B",
+        "name": "B Transfer Yard",
+        "tracks": [
+          { "number": 1, "type": ["input"], "display_name": "B1I" },
+          { "number": 3, "type": ["input"], "display_name": "B3I" },
+          { "number": 4, "type": ["storage"], "display_name": "B4S" }
+        ]
+      },
+      {
+        "id": "C",
+        "name": "C Transfer Yard",
+        "tracks": [
+          { "number": 1, "type": ["output"], "display_name": "C1O" },
+          { "number": 3, "type": ["output"], "display_name": "C3O" },
+          { "number": 4, "type": ["storage"], "display_name": "C4S" }
+        ]
+      }
+    ],
+    "services": [
+      "repair", "diesel-service", "coal-service", "electric-charger"
+    ]
+  },
+  {
+    "name": "City West",
+    "code": "CW",
+    "yards": [
+      {
+        "id": "A",
+        "name": "A",
+        "tracks": [
+          { "number": 1, "type": ["storage"], "display_name": "A1S" },
+          { "number": 3, "type": ["storage"], "display_name": "A3S" }
+        ]
+      },
+      {
+        "id": "B",
+        "name": "B Transfer Yard",
+        "tracks": [
+          { "number": 1, "type": ["storage", "passenger"], "display_name": "B1SP" },
+          { "number": 2, "type": ["storage", "passenger"], "display_name": "B2SP" },
+          { "number": 3, "type": ["loading", "passenger"], "display_name": "B3LP" },
+          { "number": 4, "type": ["loading", "passenger"], "display_name": "B4LP" },
+          { "number": 5, "type": ["loading", "passenger"], "display_name": "B5LP" },
+          { "number": 6, "type": ["loading", "passenger"], "display_name": "B6LP" }
+        ]
+      },
+      {
+        "id": "C",
+        "name": "C Transfer Yard",
+        "tracks": [
+          { "number": 2, "type": ["input"], "display_name": "C2I" },
+          { "number": 3, "type": ["input"], "display_name": "C3I" },
+          { "number": 4, "type": ["storage"], "display_name": "C4S" },
+          { "number": 5, "type": ["output"], "display_name": "C5O" },
+          { "number": 6, "type": ["loading"], "display_name": "C6L" }
+        ]
+      }
+    ],
+    "services": [
+      "repair", "diesel-service", "electric-charger", "shop"
+    ]
+  },
+  {
+    "name": "Farm",
+    "code": "FM",
+    "yards": [
+      {
+        "id": "A",
+        "name": "A",
+        "tracks": [
+          { "number": 1, "type": ["loading"], "display_name": "A1L" },
+          { "number": 2, "type": ["storage"], "display_name": "A2S" },
+          { "number": 3, "type": ["loading"], "display_name": "A3L" }
+        ]
+      },
+      {
+        "id": "B",
+        "name": "B Transfer Yard",
+        "tracks": [
+          { "number": 1, "type": ["storage"], "display_name": "B1S" },
+          { "number": 2, "type": ["input"], "display_name": "B2I" },
+          { "number": 3, "type": ["storage"], "display_name": "B3S" },
+          { "number": 5, "type": ["output"], "display_name": "B5O" },
+          { "number": 6, "type": ["output"], "display_name": "B6O" }
+        ]
+      }
+    ],
+    "services": []
+  },
+  {
+    "name": "Food Factory and Town",
+    "code": "FF",
+    "yards": [
+      {
+        "id": "A",
+        "name": "A",
+        "tracks": [
+          { "number": 1, "type": ["storage"], "display_name": "A1LS" }
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Passenger Station",
+        "tracks": [
+          { "number": 1, "type": ["loading", "passenger"], "display_name": "B1LP" },
+          { "number": 2, "type": ["loading", "passenger"], "display_name": "B2LP" },
+          { "number": 3, "type": ["storage", "passenger"], "display_name": "B3SP" },
+          { "number": 4, "type": ["storage", "passenger"], "display_name": "B4SP" },
+          { "number": 5, "type": ["storage", "passenger"], "display_name": "B5SP" }
+        ]
+      },
+      {
+        "id": "C",
+        "name": "Transfer Yard",
+        "tracks": [
+          { "number": 1, "type": ["storage"], "display_name": "C1S" },
+          { "number": 2, "type": ["output"], "display_name": "C2O" },
+          { "number": 3, "type": ["output"], "display_name": "C3O" },
+          { "number": 4, "type": ["input"], "display_name": "C4I" },
+          { "number": 5, "type": ["output"], "display_name": "C5O" },
+          { "number": 6, "type": ["input"], "display_name": "C6I" },
+          { "number": 7, "type": ["output"], "display_name": "C7O" },
+          { "number": 8, "type": ["output"], "display_name": "C8O" },
+          { "number": 9, "type": ["storage"], "display_name": "C9S" }
+        ]
+      },
+      {
+        "id": "D",
+        "name": "Loading Yard",
+        "tracks": [
+          { "number": 1, "type": ["loading"], "display_name": "D1L" },
+          { "number": 2, "type": ["input"], "display_name": "D2I" },
+          { "number": 3, "type": ["storage"], "display_name": "D3S" },
+          { "number": 4, "type": ["storage"], "display_name": "D4S" }
+        ]
+      }
+    ],
+    "services": [
+      "repair", "diesel-service", "electric-charger", "shop"
+    ]
+  },
+  {
+    "name": "Forest Central",
+    "code": "FRC",
+    "yards": [
+      {
+        "id": "B",
+        "name": "B Transfer Yard",
+        "tracks": [
+          { "number": 1, "type": [ "loading" ], "display_name": "B1L" },
+          { "number": 2, "type": [ "output" ], "display_name": "B2O" },
+          { "number": 4, "type": [ "storage" ], "display_name": "B4S" }
+        ]
+      },
+      {
+        "id": "C",
+        "name": "C Transfer Yard",
+        "tracks":  [      
+          { "number": 1, "type": [ "storage" ], "display_name": "C1S" },
+          { "number": 2, "type": [ "input" ], "display_name": "C2I" },
+          { "number": 4, "type": [ "output" ], "display_name": "C4O" }
+        ]
+      }
+    ],
+    "services": []
+  },
+  {
+    "name": "Forest South",
+    "code": "FRS",
+    "yards": [
+      {
+        "id": "B",
+        "name": "B",
+        "tracks": [
+          { "number": 1, "type": [ "loading" ], "display_name": "B1L" },
+          { "number": 2, "type": [ "input" ], "display_name": "B2I" },
+          { "number": 3, "type": [ "output" ], "display_name": "B3O" },
+          { "number": 5, "type": [ "output" ], "display_name": "B5O" },
+          { "number": 6, "type": [ "storage" ], "display_name": "B6S" },
+          { "number": 7, "type": [ "storage" ], "display_name": "B7S" }
+        ]
+      }
+    ],
+    "services": []
+  },
+  {
+    "name": "Goods Factory",
+    "code": "GF",
+    "yards": [
+      {
+        "id": "A",
+        "name": "A",
+        "tracks": [
+          { "number": 2, "type": [ "storage" ], "display_name": "A2S" },
+          { "number": 3, "type": [ "storage" ], "display_name": "A3S" }
+        ]
+      },
+      {
+        "id": "B",
+        "name": "B Transfer Yard",
+        "tracks": [
+          { "number": 1, "type": [ "loading" ], "display_name": "B1L" },
+          { "number": 2, "type": [ "storage" ], "display_name": "B2S" },
+          { "number": 3, "type": [ "storage" ], "display_name": "B3S" }
+        ]
+      },
+      {
+        "id": "C",
+        "name": "C Transfer Yard",
+        "tracks": [
+          { "number": 1, "type": [ "storage", "passenger" ], "display_name": "C1SP" },
+          { "number": 2, "type": [ "loading", "passenger" ], "display_name": "C2LP" },
+          { "number": 3, "type": [ "loading", "passenger" ], "display_name": "C3LP" }
+        ]
+      },
+      {
+        "id": "D",
+        "name": "D Transfer Yard",
+        "tracks": [
+          { "number": 1, "type": [ "storage" ], "display_name": "D1S" },
+          { "number": 2, "type": [ "output" ], "display_name": "D2O" },
+          { "number": 3, "type": [ "output" ], "display_name": "D3O" },
+          { "number": 5, "type": [ "input" ], "display_name": "D5I" },
+          { "number": 6, "type": [ "storage" ], "display_name": "D6S" },
+          { "number": 7, "type": [ "output" ], "display_name": "D7O" }
+        ]
+      }
+    ],
+    "services": [
+      "repair", "diesel-service", "coal-service", "electric-charger", "shop"
+    ]
+  },
+  {
+    "name": "Harbor and Town",
+    "code": "HB",
+    "yards": [
+      {
+        "id": "B",
+        "name": "Military Base",
+        "tracks": [
+          { "number": 1, "type": [ "loading" ], "display_name": "B1L" },
+          { "number": 3, "type": [ "storage" ], "display_name": "B3S" },
+          { "number": 4, "type": [ "storage" ], "display_name": "B4S" },
+          { "number": 5, "type": [ "output" ], "display_name": "B5O" },
+          { "number": 6, "type": [ "output" ], "display_name": "B6O" },
+          { "number": 7, "type": [ "input" ], "display_name": "B7I" },
+          { "number": 8, "type": [ "output" ], "display_name": "B8O" }
+        ]
+      },
+      {
+        "id": "C",
+        "name": "Fluid Loading Yard",
+        "tracks": [
+          { "number": 1, "type": [ "storage" ], "display_name": "C1S" },
+          { "number": 2, "type": [ "input" ], "display_name": "C2I" },
+          { "number": 3, "type": [ "loading" ], "display_name": "C3L" }
+        ]
+      },
+      {
+        "id": "D",
+        "name": "Crane Loading Yard",
+        "tracks": [
+          { "number": 1, "type": [ "storage" ], "display_name": "D1S" },
+          { "number": 2, "type": [ "storage" ], "display_name": "D2S" },
+          { "number": 3, "type": [ "output" ], "display_name": "D3O" },
+          { "number": 4, "type": [ "input" ], "display_name": "D4I" },
+          { "number": 5, "type": [ "storage" ], "display_name": "D5S" },
+          { "number": 6, "type": [ "output" ], "display_name": "D6O" },
+          { "number": 7, "type": [ "loading" ], "display_name": "D7L" }
+        ]
+      },
+      {
+        "id": "E",
+        "name": "E Transfer Yard",
+        "tracks": [
+          { "number": 1, "type": [ "output" ], "display_name": "E1O" },
+          { "number": 2, "type": [ "output" ], "display_name": "E2O" },
+          { "number": 3, "type": [ "output" ], "display_name": "E3O" },
+          { "number": 4, "type": [ "output" ], "display_name": "E4O" },
+          { "number": 5, "type": [ "output" ], "display_name": "E5O" },
+          { "number": 7, "type": [ "output" ], "display_name": "E7O" },
+          { "number": 8, "type": [ "input" ], "display_name": "E8I" },
+          { "number": 9, "type": [ "input" ], "display_name": "E9I" },
+          { "number": 10, "type": [ "output" ], "display_name": "E10O" },
+          { "number": 11, "type": [ "output" ], "display_name": "E11O" }
+        ]
+      },
+      {
+        "id": "F",
+        "name": "Passenger Station",
+        "tracks": [
+          { "number": 1, "type": [ "loading", "passenger" ], "display_name": "F1LP" },
+          { "number": 2, "type": [ "loading", "passenger" ], "display_name": "F2LP" },
+          { "number": 3, "type": [ "storage", "passenger" ], "display_name": "F3SP" },
+          { "number": 4, "type": [ "storage", "passenger" ], "display_name": "F4SP" }
+        ]
+      },
+      {
+        "id": "G",
+        "name": "G Transfer Yard",
+        "tracks": [
+          { "number": 1, "type": [ "storage" ], "display_name": "G1S" },
+          { "number": 2, "type": [ "storage" ], "display_name": "G2S" },
+          { "number": 3, "type": [ "output" ], "display_name": "G3O" },
+          { "number": 5, "type": [ "input" ], "display_name": "G5I" },
+          { "number": 6, "type": [ "storage" ], "display_name": "G6S" },
+          { "number": 7, "type": [ "storage" ], "display_name": "G7S" }
+        ]
+      }
+    ],
+    "services": [
+      "repair", "diesel-service", "coal-service", "electric-charger", "shop"
+    ]
+  },
+  {
+    "name": "Iron Ore Mine East",
+    "code": "IME",
+    "yards": [
+      {
+        "id": "A",
+        "name": "A",
+        "tracks": [
+          { "number": 1, "type": [ "loading" ], "display_name": "A1L" }
+        ]
+      },
+      {
+        "id": "B",
+        "name": "B Transfer Yard",
+        "tracks": [
+          { "number": 1, "type": [ "storage" ], "display_name": "B1S" },
+          { "number": 2, "type": [ "output" ], "display_name": "B2O" },
+          { "number": 4, "type": [ "output" ], "display_name": "B4O" }
+        ]
+      },
+      {
+        "id": "C",
+        "name": "C Transfer Yard",
+        "tracks": [
+          { "number": 1, "type": [ "storage" ], "display_name": "C1S" },
+          { "number": 3, "type": [ "output" ], "display_name": "C3O" },
+          { "number": 4, "type": [ "input" ], "display_name": "C4I" }
+        ]
+      }
+    ],
+    "services": [
+      "repair", "coal-service"
+    ]
+  },
+  {
+    "name": "Iron Ore Mine West",
+    "code": "IMW",
+    "yards": [
+      {
+        "id": "B",
+        "name": "B Transfer Yard",
+        "tracks": [
+          { "number": 1, "type": [ "storage" ], "display_name": "B1S" },
+          { "number": 2, "type": [ "input" ], "display_name": "B2I" },
+          { "number": 3, "type": [ "output" ], "display_name": "B3O" },
+          { "number": 4, "type": [ "output" ], "display_name": "B4O" },
+          { "number": 6, "type": [ "output" ], "display_name": "B6O" },
+          { "number": 7, "type": [ "storage" ], "display_name": "B7S" },
+          { "number": 8, "type": [ "loading" ], "display_name": "B8L" }
+        ]
+      }
+    ],
+    "services": [
+      "repair", "coal-service"
+    ]
+  },
+  {
+    "name": "Machine Factory and Town",
+    "code": "MF",
+    "yards": [
+      {
+        "id": "B",
+        "name": "B Transfer Yard",
+        "tracks": [
+          { "number": 1, "type": [ "storage" ], "display_name": "B1S" },
+          { "number": 2, "type": [ "output" ], "display_name": "B2O" },
+          { "number": 4, "type": [ "output" ], "display_name": "B4O" },
+          { "number": 5, "type": [ "output" ], "display_name": "B5O" },
+          { "number": 6, "type": [ "storage" ], "display_name": "B6S" }
+        ]
+      },
+      {
+        "id": "C",
+        "name": "C Transfer Yard",
+        "tracks": [
+          { "number": 1, "type": [ "loading" ], "display_name": "C1L" },
+          { "number": 2, "type": [ "storage" ], "display_name": "C2S" },
+          { "number": 3, "type": [ "input" ], "display_name": "C3I" },
+          { "number": 4, "type": [ "input" ], "display_name": "C4I" }
+        ]
+      },
+      {
+        "id": "D",
+        "name": "Passenger Station",
+        "tracks": [
+          { "number": 1, "type": [ "loading", "passenger" ], "display_name": "D1LP" },
+          { "number": 2, "type": [ "loading", "passenger" ], "display_name": "D2LP" },
+          { "number": 4, "type": [ "storage", "passenger" ], "display_name": "D4SP" }
+        ]
+      },
+      {
+        "id": "E",
+        "name": "Military Base",
+        "tracks": [
+          { "number": 1, "type": [ "output" ], "display_name": "E1O" },
+          { "number": 2, "type": [ "storage" ], "display_name": "E2S" },
+          { "number": 3, "type": [ "input" ], "display_name": "E3I" },
+          { "number": 4, "type": [ "loading" ], "display_name": "E4L" }
+        ]
+      }
+    ],
+    "services": [
+      "repair", "diesel-service", "coal-service", "electric-charger", "shop"
+    ]
+  },
+  {
+    "name": "Military Base",
+    "code": "MB",
+    "yards": [
+      {
+        "id": "A",
+        "name": "A",
+        "tracks": [
+          { "number": 1, "type": [ "loading" ], "display_name": "A1L" },
+          { "number": 2, "type": [ "storage" ], "display_name": "A2S" }
+        ]
+      },
+      {
+        "id": "B",
+        "name": "B Transfer Yard",
+        "tracks": [
+          { "number": 2, "type": [ "output" ], "display_name": "B2O" },
+          { "number": 3, "type": [ "output" ], "display_name": "B3O" },
+          { "number": 4, "type": [ "input" ], "display_name": "B4I" },
+          { "number": 5, "type": [ "output" ], "display_name": "B5O" },
+          { "number": 6, "type": [ "storage" ], "display_name": "B6S" }
+        ]
+      }
+    ],
+    "services": []
+  },
+  {
+    "name": "Oil Refinery",
+    "code": "OR",
+    "yards": [
+      {
+        "id": "A",
+        "name": "A",
+        "tracks": [
+          { "number": 1, "type": [ "loading" ], "display_name": "A1L" },
+          { "number": 2, "type": [ "storage" ], "display_name": "A2S" },
+          { "number": 3, "type": [ "storage" ], "display_name": "A3S" },
+          { "number": 4, "type": [ "storage" ], "display_name": "A4S" },
+          { "number": 5, "type": [ "storage" ], "display_name": "A5S" },
+          { "number": 6, "type": [ "storage" ], "display_name": "A6S" }
+        ]
+      },
+      {
+        "id": "B",
+        "name": "B Transfer Yard",
+        "tracks": [
+          { "number": 3, "type": [ "output" ], "display_name": "B3O" },
+          { "number": 4, "type": [ "output" ], "display_name": "B4O" },
+          { "number": 5, "type": [ "output" ], "display_name": "B5O" },
+          { "number": 6, "type": [ "input" ], "display_name": "B6I" },
+          { "number": 7, "type": [ "storage" ], "display_name": "B7S" }
+        ]
+      }
+    ],
+    "services": []
+  },
+  {
+    "name": "Oil Well Central",
+    "code": "OWC",
+    "yards": [
+      {
+        "id": "A",
+        "name": "A",
+        "tracks": [
+          { "number": 1, "type": [ "loading" ], "display_name": "A1L" },
+          { "number": 2, "type": [ "storage" ], "display_name": "A2S" },
+          { "number": 3, "type": [ "input" ], "display_name": "A3I" }
+        ]
+      },
+      {
+        "id": "B",
+        "name": "B Transfer Yard",
+        "tracks": [
+          { "number": 1, "type": [ "output" ], "display_name": "B1O" },
+          { "number": 3, "type": [ "output" ], "display_name": "B3O" },
+          { "number": 4, "type": [ "output" ], "display_name": "B4O" },
+          { "number": 5, "type": [ "output" ], "display_name": "B5O" },
+          { "number": 6, "type": [ "storage" ], "display_name": "B6S" }
+        ]
+      }
+    ],
+    "services": [
+      "repair", "diesel-service"
+    ]
+  },
+  {
+    "name": "Oil Well North", 
+    "code": "OWN",
+    "yards": [
+      {
+        "id": "B",
+        "name": "B Transfer Yard",
+        "tracks": [
+          { "number": 2, "type": [ "storage" ], "display_name": "B2S" },
+          { "number": 3, "type": [ "output" ], "display_name": "B3O" },
+          { "number": 4, "type": [ "output" ], "display_name": "B4O" },
+          { "number": 5, "type": [ "output" ], "display_name": "B5O" },
+          { "number": 6, "type": [ "loading" ], "display_name": "B6L" }
+        ]
+      },
+      {
+        "id": "C",
+        "name": "C Transfer Yard",
+        "tracks": [
+          { "number": 1, "type": [ "storage" ], "display_name": "C1S" },
+          { "number": 3, "type": [ "input" ], "display_name": "C3I" }
+        ]
+      }
+    ],
+    "services": [
+      "repair", "diesel-service"
+    ]
+  },
+  {
+    "name": "Sawmill",
+    "code": "SW",
+    "yards": [
+      {
+        "id": "B",
+        "name": "Loading Yard",
+        "tracks": [
+          { "number": 1, "type": [ "storage" ], "display_name": "B1S" },
+          { "number": 3, "type": [ "input" ], "display_name": "B3I" },
+          { "number": 4, "type": [ "loading" ], "display_name": "B4L" }
+        ]
+      },
+      {
+        "id": "C",
+        "name": "C Transfer Yard",
+        "tracks": [
+          { "number": 1, "type": [ "output" ], "display_name": "C1O" },
+          { "number": 3, "type": [ "input" ], "display_name": "C3I" },
+          { "number": 4, "type": [ "storage" ], "display_name": "C4S" }
+        ]
+      }
+    ],
+    "services": [
+      "repair", "coal-service"
+    ]
+  },
+  {
+    "name": "Steel Mill",
+    "code": "SM",
+    "yards": [
+      {
+        "id": "A",
+        "name": "A",
+        "tracks": [
+          { "number": 3, "type": [ "storage" ], "display_name": "A3S" },
+          { "number": 4, "type": [ "storage" ], "display_name": "A4S" },
+          { "number": 5, "type": [ "storage" ], "display_name": "A5S" },
+          { "number": 6, "type": [ "input" ], "display_name": "A6I" },
+          { "number": 7, "type": [ "loading" ], "display_name": "A7L" }
+        ]
+      },
+      {
+        "id": "B",
+        "name": "B Transfer Yard",
+        "tracks": [
+          { "number": 1, "type": [ "output" ], "display_name": "B1O" },
+          { "number": 2, "type": [ "output" ], "display_name": "B2O" },
+          { "number": 3, "type": [ "input" ], "display_name": "B3I" },
+          { "number": 4, "type": [ "output" ], "display_name": "B4O" },
+          { "number": 6, "type": [ "output" ], "display_name": "B6O" },
+          { "number": 7, "type": [ "storage" ], "display_name": "B7S" },
+          { "number": 8, "type": [ "storage" ], "display_name": "B8S" }
+        ]
+      }
+    ],
+    "services": [
+      "repair", "diesel-service", "coal-service", "electric-charger"
+    ]
+  }
+]
